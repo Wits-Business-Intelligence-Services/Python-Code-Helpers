@@ -45,3 +45,19 @@ class LoggedDatabaseError(Exception):
         return "The error in the database is as follows: {error}".format(
             error=self.message
         )
+
+
+class LoggedSubprocessError(Exception):
+    """
+    SubprocessError, but with builtin logging.
+    """
+
+    def __init__(self, logger: __logging__.Logger, message: str):
+        logger.error(message)
+        logger.error("----------END:ERROR----------")
+        self.message: str = message
+
+    def __str__(self) -> str:
+        return "The error encountered when using subprocess is as follows: {error}".format(
+            error=self.message
+        )

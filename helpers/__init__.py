@@ -3,5 +3,6 @@ from helpers.logged_exceptions import (
     LoggedValueError,
     LoggedDataError,
     LoggedDatabaseError,
+    LoggedSubprocessError,
 )
 from helpers.logging import setup_logging
