@@ -1,6 +1,6 @@
 import sqlalchemy as __sq__
 from logging import Logger as __Logger__
-from helpers.logged_exceptions import LoggedDatabaseError as __LoggedDatabaseError__
+import helpers
 
 
 # ----------------------------------------------------
@@ -8,7 +8,7 @@ from helpers.logged_exceptions import LoggedDatabaseError as __LoggedDatabaseErr
 # ----------------------------------------------------
 
 
-def create_engine(username: str, password: str, database: str, logger: __Logger__):
+def create_engine(username: str, password: str, database: str, logger: __Logger__ = None):
     """
     Sets up a database connection engine used to execute queries.
 
@@ -18,9 +18,13 @@ def create_engine(username: str, password: str, database: str, logger: __Logger_
     :param logger: (logging.Logger): Logger for logging debug and error messages.
     :return: (sqlalchemy.engine): Database connection engine.
     """
+
+    if logger is None:
+        logger = helpers.utils.MockLogger()
+
     conn_string: str = "oracle+cx_oracle://" + username + ":" + password + "@" + database
     # print(conn_string)
-    engine = __sq__.create_engine(conn_string, pool_size=30, max_overflow=-1)
+    engine: __sq__.engine = __sq__.create_engine(conn_string, pool_size=30, max_overflow=-1)
 
     try:
         with ConnectionManager(engine):
@@ -28,7 +32,7 @@ def create_engine(username: str, password: str, database: str, logger: __Logger_
                 "Got DB Connection: " + database
             )
     except Exception as e:
-        raise __LoggedDatabaseError__(
+        raise helpers.LoggedDatabaseError(
             logger,
             "failed to connect to DB: {DB}\n{error}".format(
                 DB=database, error=str(e)
