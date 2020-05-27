@@ -85,7 +85,7 @@ def drop_table(
     """
     Drop staging or prod table.
 
-    :param logger: (logging.logger): Logger to use for logging
+    :param logger: (logging.logger): Logger to use for logging.
     :param engine: (sqlalchemy.engine) DB engine used for DB connection.
     :param table_name: (str): Name of table to perform operation on.
     :param staging: (bool): If True, drop staging table, else prod table will be dropped.
@@ -126,7 +126,7 @@ def create_table(
     match for compatibility.
     :param allow_nulls: (bool): Allow nulls in table.
     :param use_date_created: (bool): Include a 'DATE_CREATED' column with current date and time.
-    :param logger: (logging.logger): Logger to use for logging
+    :param logger: (logging.logger): Logger to use for logging.
     :param engine: (sqlalchemy.engine) DB engine used for DB connection.
     :param table_name: (str): Name of table to perform operation on.
     :param data_results: (pd.DataFrame): Data to use for generating column names and data types.
@@ -143,10 +143,7 @@ def create_table(
     if not db_col_names:
         # Formulate and execute query to create table on DB
         create_query: str = helpers.utils.generate_table_creation_query(
-            data_results,
-            table_name,
-            allow_nulls,
-            use_date_created,
+            data_results, table_name, allow_nulls, use_date_created,
         )
 
         with helpers.ConnectionManager(engine) as conn:
@@ -207,10 +204,10 @@ def upload_data_to_table(
     Upload data in table_data DataFrame to table.
 
     :param use_date_created: (bool): Include a 'DATE_CREATED' column with current date and time.
-    :param logger: (logging.logger): Logger to use for logging
+    :param logger: (logging.logger): Logger to use for logging.
     :param engine: (sqlalchemy.engine) DB engine used for DB connection.
     :param table_name: (str): Name of table to perform operation on.
-    :param upload_partition_size:
+    :param upload_partition_size: (int): Number of rows to upload at a time.
     :param table_data: (pd.DataFrame): data to be uploaded.
     :return: None
     """
@@ -263,3 +260,42 @@ def upload_data_to_table(
         conn.execute(insert_query)
         trans.commit()
     logger.info("Completed upload of data to table.")
+
+
+def update_column_by_value(
+    old_value: int,
+    new_value: int,
+    table_name: str,
+    column_name: str,
+    engine: __sq__.engine,
+    logger: __Logger__ = None,
+) -> None:
+    """
+    Update all rows in the production DB that have the old value in latest_prediction
+    to have the new value.
+
+    :param column_name: (str): Name of column to update.
+    :param logger: (logging.logger): Logger to use for logging.
+    :param engine: (sqlalchemy.engine) DB engine used for DB connection.
+    :param table_name: (str): Name of table to perform operation on.
+    :param old_value: (int): Value to select rows by.
+    :param new_value: (int): Value to replace old value.
+    :return: None
+    """
+    if logger is None:
+        logger = helpers.utils.MockLogger()
+
+    query: str = helpers.utils.generate_update_column_by_value_query(
+        table_name, column_name, old_value, new_value,
+    )
+
+    with helpers.ConnectionManager(engine) as conn:
+        trans = conn.begin()
+        conn.execute(query)
+        trans.commit()
+
+    logger.info(
+        "Updating rows in {table_name} table: latest prediction={old_value} -> latest prediction={new_value}.".format(
+            table_name=table_name, old_value=old_value, new_value=new_value
+        )
+    )

@@ -5,5 +5,6 @@ from helpers.utils.database_functions import (
     generate_column_names_of_db_table_query,
     generate_table_creation_query,
     generate_insert_query,
+    generate_update_column_by_value_query,
 )
 from helpers.utils.MockLogger import MockLogger

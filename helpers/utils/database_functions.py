@@ -273,3 +273,33 @@ def generate_insert_query(data: __pd__.DataFrame, table_name: str) -> str:
     )
 
     return insert_query
+
+
+# ----------------------------------------------------
+# Generate query to update current records in database to new value
+# ----------------------------------------------------
+
+
+def generate_update_column_by_value_query(
+    table_name: str, column_name: str, old_value: int, new_value: int
+) -> str:
+    """
+    Generate query to update values of column matching old_value to the value in new_value.
+
+    :param column_name: (str): Name of column to update.
+    :param table_name: (str): Name of table to update.
+    :param old_value: (int): Value of column to select rows by.
+    :param new_value: (str): Value of column that selected rows will be updated to.
+    :return: (str): Query to update latest_prediction.
+    """
+    query: str = """UPDATE {table_name}
+    SET 
+        {column_name} = {new_value}
+    WHERE
+        {column_name} = {old_value}""".format(
+        table_name=table_name,
+        column_name=column_name,
+        new_value=new_value,
+        old_value=old_value,
+    )
+    return query

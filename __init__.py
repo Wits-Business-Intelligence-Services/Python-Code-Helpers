@@ -19,19 +19,8 @@ __all__ = [
     "truncate_table",
     "drop_table",
     "create_table",
-    "upload_data_to_table"
+    "upload_data_to_table",
+    "update_column_by_value"
 ]
 
 from .helpers import *
-
-# from .helpers.connection_management import (
-#     ConnectionManager,
-#     create_engine,
-# )
-# from .helpers.logged_exceptions import (
-#     LoggedValueError,
-#     LoggedDataError,
-#     LoggedDatabaseError,
-#     LoggedSubprocessError,
-# )
-# from .helpers.logging_helpers import setup_logging

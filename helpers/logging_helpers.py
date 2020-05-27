@@ -3,7 +3,9 @@ from os import path as __path__
 from os import mkdir as __mkdir__
 
 
-def setup_logging(log_folder: str, unique_log_name: str, logging_level: str) -> __logging__.Logger:
+def setup_logging(
+    log_folder: str, unique_log_name: str, logging_level: str
+) -> __logging__.Logger:
 
     # Set logging level
     if logging_level == "DEBUG":
@@ -29,7 +31,3 @@ def setup_logging(log_folder: str, unique_log_name: str, logging_level: str) -> 
 
     logger: __logging__.Logger = __logging__.getLogger()
     return logger
-
-
-
-

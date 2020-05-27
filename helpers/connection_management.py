@@ -8,7 +8,9 @@ import helpers
 # ----------------------------------------------------
 
 
-def create_engine(username: str, password: str, database: str, logger: __Logger__ = None):
+def create_engine(
+    username: str, password: str, database: str, logger: __Logger__ = None
+):
     """
     Sets up a database connection engine used to execute queries.
 
@@ -24,19 +26,17 @@ def create_engine(username: str, password: str, database: str, logger: __Logger_
 
     conn_string: str = "oracle+cx_oracle://" + username + ":" + password + "@" + database
     # print(conn_string)
-    engine: __sq__.engine = __sq__.create_engine(conn_string, pool_size=30, max_overflow=-1)
+    engine: __sq__.engine = __sq__.create_engine(
+        conn_string, pool_size=30, max_overflow=-1
+    )
 
     try:
         with ConnectionManager(engine):
-            logger.debug(
-                "Got DB Connection: " + database
-            )
+            logger.debug("Got DB Connection: " + database)
     except Exception as e:
         raise helpers.LoggedDatabaseError(
             logger,
-            "failed to connect to DB: {DB}\n{error}".format(
-                DB=database, error=str(e)
-            ),
+            "failed to connect to DB: {DB}\n{error}".format(DB=database, error=str(e)),
         )
 
     return engine
