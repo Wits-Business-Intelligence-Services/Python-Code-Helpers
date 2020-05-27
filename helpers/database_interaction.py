@@ -224,42 +224,51 @@ def upload_data_to_table(
     )
     if use_date_created:
         table_data["DATE_CREATED"] = date_str
-    with helpers.ConnectionManager(engine) as conn:
-        while (iterator_index + 1) * upload_partition_size < data_num_records:
-            print(
-                "Uploading rows: {a} - {b}".format(
-                    a=str(iterator_index * upload_partition_size),
-                    b=str((iterator_index + 1) * upload_partition_size - 1),
-                )
-            )
-            insert_query: str = helpers.utils.generate_insert_query(
-                table_data[
-                    iterator_index
-                    * upload_partition_size : (iterator_index + 1)
-                    * upload_partition_size
-                ],
-                table_name,
-            )
 
-            trans = conn.begin()
-            conn.execute(insert_query)
-            trans.commit()
-            iterator_index += 1
+    while (iterator_index + 1) * upload_partition_size < data_num_records:
 
-        print(
-            "Uploading rows: {a} - {b}".format(
-                a=str(iterator_index * upload_partition_size), b=str(data_num_records),
-            )
+        query: str = helpers.utils.generate_insert_query(
+            table_data[
+                iterator_index
+                * upload_partition_size : (iterator_index + 1)
+                * upload_partition_size
+            ],
+            table_name,
         )
-        # Final non divisible rows
-        insert_query: str = helpers.utils.generate_insert_query(
-            table_data[iterator_index * upload_partition_size :], table_name,
+        success_msg: str = "Uploaded rows: {a} - {b}".format(
+            a=str(iterator_index * upload_partition_size),
+            b=str((iterator_index + 1) * upload_partition_size - 1),
         )
 
-        trans = conn.begin()
-        conn.execute(insert_query)
-        trans.commit()
-    logger.info("Completed upload of data to table.")
+        error_msg: str = "Failed to upload rows: {a} - {b}".format(
+            a=str(iterator_index * upload_partition_size),
+            b=str((iterator_index + 1) * upload_partition_size - 1),
+        )
+
+        helpers.execute_action_query_on_db(
+            query, success_msg, error_msg, engine, logger
+        )
+        iterator_index += 1
+
+    print(
+        "Uploading rows: {a} - {b}".format(
+            a=str(iterator_index * upload_partition_size), b=str(data_num_records),
+        )
+    )
+    # Final non divisible rows
+    query: str = helpers.utils.generate_insert_query(
+        table_data[iterator_index * upload_partition_size :], table_name,
+    )
+
+    success_msg: str = "Uploaded rows: {a} - {b}".format(
+        a=str(iterator_index * upload_partition_size), b=str(data_num_records),
+    )
+
+    error_msg: str = "Failed to upload rows: {a} - {b}".format(
+        a=str(iterator_index * upload_partition_size), b=str(data_num_records),
+    )
+
+    helpers.execute_action_query_on_db(query, success_msg, error_msg, engine, logger)
 
 
 def update_column_by_value(
@@ -288,14 +297,60 @@ def update_column_by_value(
     query: str = helpers.utils.generate_update_column_by_value_query(
         table_name, column_name, old_value, new_value,
     )
-
-    with helpers.ConnectionManager(engine) as conn:
-        trans = conn.begin()
-        conn.execute(query)
-        trans.commit()
-
-    logger.info(
-        "Updating rows in {table_name} table: latest prediction={old_value} -> latest prediction={new_value}.".format(
-            table_name=table_name, old_value=old_value, new_value=new_value
-        )
+    success_msg: str = "Updated rows in {table_name} table: {column_name}={old_value} -> {column_name}={new_value}.".format(
+        table_name=table_name,
+        old_value=old_value,
+        new_value=new_value,
+        column_name=column_name,
     )
+    error_msg: str = "Failed to update rows in {table_name} table: {column_name}={old_value} -> {column_name}={new_value}.".format(
+        table_name=table_name,
+        old_value=old_value,
+        new_value=new_value,
+        column_name=column_name,
+    )
+
+    helpers.execute_action_query_on_db(query, success_msg, error_msg, engine, logger)
+
+
+def execute_select_query_on_db(
+    query: str,
+    success_msg: str,
+    error_msg: str,
+    engine: __sq__.engine,
+    logger: __Logger__ = None,
+) -> __pd__.DataFrame:
+
+    if logger is None:
+        logger = helpers.utils.MockLogger()
+
+    try:
+        with helpers.ConnectionManager(engine) as conn:
+            result: __pd__.DataFrame = __pd__.read_sql(query, conn)
+            logger.debug(success_msg)
+    except Exception as e:
+        logger.error(error_msg)
+        raise helpers.LoggedDatabaseError(logger, str(e))
+    return result
+
+
+def execute_action_query_on_db(
+    query: str,
+    success_msg: str,
+    error_msg: str,
+    engine: __sq__.engine,
+    logger: __Logger__ = None,
+) -> None:
+
+    if logger is None:
+        logger = helpers.utils.MockLogger()
+
+    try:
+        with helpers.ConnectionManager(engine) as conn:
+            trans = conn.begin()
+            conn.execute(query)
+            trans.commit()
+            logger.debug(success_msg)
+    except Exception as e:
+        logger.error(error_msg)
+        raise helpers.LoggedDatabaseError(logger, str(e))
