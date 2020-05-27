@@ -143,6 +143,7 @@ def generate_table_creation_query(
     db_table_cols = db_table_cols.str.replace("float32", "FLOAT(32)")
     db_table_cols = db_table_cols.str.replace("float64", "FLOAT(64)")
     db_table_cols = db_table_cols.str.replace("int64", "NUMBER")
+    db_table_cols = db_table_cols.str.replace("int32", "NUMBER")
 
     # convert series to DataFrame
     db_table_cols_frame: __pd__.DataFrame = db_table_cols.to_frame()
