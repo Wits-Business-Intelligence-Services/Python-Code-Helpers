@@ -14,6 +14,12 @@ __all__ = [
     "LoggedDatabaseError",
     "LoggedSubprocessError",
     "setup_logging",
+    "get_db_table_column_names",
+    "get_db_table_row_count",
+    "truncate_table",
+    "drop_table",
+    "create_table",
+    "upload_data_to_table"
 ]
 
 from .helpers import *
