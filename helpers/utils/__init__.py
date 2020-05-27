@@ -7,4 +7,4 @@ from helpers.utils.database_functions import (
     generate_insert_query,
     generate_update_column_by_value_query,
 )
-from helpers.utils.MockLogger import MockLogger
+from helpers.utils.MockLogger import MockLogger, set_mock_logging_level, LoggingLevels
