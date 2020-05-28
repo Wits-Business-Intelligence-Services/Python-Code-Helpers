@@ -7,7 +7,7 @@ import time as __time__
 
 
 def check_existence_of_table(
-    table_name: str, engine: __sq__.engine, logger: __Logger__ = None
+    table_name: str, engine, logger: __Logger__ = None
 ) -> bool:
     """
     Check existence of table on database.
@@ -41,7 +41,7 @@ def check_existence_of_table(
 
 
 def get_db_table_column_names(
-    table_name: str, engine: __sq__.engine, logger: __Logger__ = None
+    table_name: str, engine, logger: __Logger__ = None
 ) -> __Optional__[list]:
     """
     Get column names of table on database. Checks for existence of table first.
@@ -76,7 +76,7 @@ def get_db_table_column_names(
 
 
 def get_db_table_row_count(
-    table_name: str, engine: __sq__.engine, logger: __Logger__ = None
+    table_name: str, engine, logger: __Logger__ = None
 ) -> __Optional__[int]:
     """
     Get row count of table on database. Checks for existence of table first.
@@ -111,7 +111,7 @@ def get_db_table_row_count(
 
 
 def truncate_table(
-    table_name: str, engine: __sq__.engine, logger: __Logger__ = None
+    table_name: str, engine, logger: __Logger__ = None
 ) -> None:
     """
     Truncate staging or prod table. Checks for existence of table first.
@@ -141,7 +141,7 @@ def truncate_table(
 
 
 def drop_table(
-    table_name: str, engine: __sq__.engine, logger: __Logger__ = None
+    table_name: str, engine, logger: __Logger__ = None
 ) -> None:
     """
     Drop table. Checks for existence of table first.
@@ -171,7 +171,7 @@ def drop_table(
 def create_table(
     data_results: __pd__.DataFrame,
     table_name: str,
-    engine: __sq__.engine,
+    engine,
     allow_nulls: bool = True,
     use_date_created: bool = False,
     logger: __Logger__ = None,
@@ -247,7 +247,7 @@ def upload_data_to_table(
     table_data: __pd__.DataFrame,
     upload_partition_size: int,
     table_name: str,
-    engine: __sq__.engine,
+    engine,
     use_date_created: bool = False,
     logger: __Logger__ = None,
 ) -> None:
@@ -328,7 +328,7 @@ def update_column_by_value(
     new_value: int,
     table_name: str,
     column_name: str,
-    engine: __sq__.engine,
+    engine,
     logger: __Logger__ = None,
 ) -> None:
     """
@@ -369,7 +369,7 @@ def execute_select_query_on_db(
     query: str,
     success_msg: str,
     error_msg: str,
-    engine: __sq__.engine,
+    engine,
     logger: __Logger__ = None,
 ) -> __pd__.DataFrame:
     """
@@ -400,7 +400,7 @@ def execute_action_query_on_db(
     query: str,
     success_msg: str,
     error_msg: str,
-    engine: __sq__.engine,
+    engine,
     logger: __Logger__ = None,
 ) -> None:
     """

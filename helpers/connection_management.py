@@ -26,7 +26,7 @@ def create_engine(
 
     conn_string: str = "oracle+cx_oracle://" + username + ":" + password + "@" + database
     # print(conn_string)
-    engine: __sq__.engine = __sq__.create_engine(
+    engine = __sq__.create_engine(
         conn_string, pool_size=30, max_overflow=-1
     )
 
@@ -52,11 +52,11 @@ class ConnectionManager:
     Context manager class to open and close connections as required.
     """
 
-    def __init__(self, engine: __sq__.engine):
-        self.engine: __sq__.engine = engine
+    def __init__(self, engine):
+        self.engine = engine
 
     def __enter__(self):
-        self.connection: __sq__.engine.base.Connection = self.engine.connect()
+        self.connection = self.engine.connect()
         return self.connection
 
     def __exit__(self, exc_type, exc_val, exc_tb):
