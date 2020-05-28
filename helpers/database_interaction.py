@@ -6,6 +6,40 @@ from logging import Logger as __Logger__
 import time as __time__
 
 
+def check_existence_of_table(
+    table_name: str, engine: __sq__.engine, logger: __Logger__ = None
+) -> bool:
+    """
+    Check existence of table on database.
+
+    :param table_name: (str): Name of table to perform operation on.
+    :param engine: (sqlalchemy.engine): DB engine used for DB connection.
+    :param logger: (logging.Logger): Logger to use for logging.
+    :return: (bool): Existence of table.
+    """
+
+    if logger is None:
+        logger = helpers.utils.MockLogger()
+
+    query: str = helpers.utils.generate_check_existence_of_table_query(table_name)
+    with helpers.ConnectionManager(engine) as conn:
+        try:
+            result: __pd__.DataFrame = __pd__.read_sql(query, conn)
+            if "1" in result.columns:
+                logger.debug(
+                    "Table '{table_name}' exists.".format(table_name=table_name)
+                )
+                return True
+        except __sq__.exc.DatabaseError as error:
+            if "table or view does not exist" in str(error):
+                logger.debug(
+                    "Table '{table_name}' does not exist.".format(table_name=table_name)
+                )
+                return False
+            else:
+                raise helpers.LoggedDatabaseError(logger, str(error))
+
+
 def get_db_table_column_names(
     table_name: str, engine: __sq__.engine
 ) -> __Optional__[list]:

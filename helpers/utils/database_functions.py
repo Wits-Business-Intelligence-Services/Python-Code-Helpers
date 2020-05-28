@@ -304,3 +304,22 @@ def generate_update_column_by_value_query(
         old_value=old_value,
     )
     return query
+
+
+# ----------------------------------------------------
+# Generate query to check existence of table on database
+# ----------------------------------------------------
+
+
+def generate_check_existence_of_table_query(table_name: str) -> str:
+    """
+    Generate query to check existence of table on database.
+
+    :param table_name: (str): Name of table to update.
+    :return: (str): Query to check existence of table.
+    """
+    query: str = "SELECT 1 from {table_name} where rownum < 2".format(
+        table_name=table_name
+    )
+    # query: str = "select * from information_schema.tables where table_name = '{table_name}'".format(table_name=table_name)
+    return query
