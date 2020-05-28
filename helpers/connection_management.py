@@ -14,15 +14,15 @@ def create_engine(
     """
     Sets up a database connection engine used to execute queries.
 
-    :param username: (str): Username for DB
-    :param password: (str): Password for DB
-    :param database: (str): DB address
+    :param username: (str): Username for DB.
+    :param password: (str): Password for DB.
+    :param database: (str): DB address.
     :param logger: (logging.Logger): Logger for logging debug and error messages.
-    :return: (sqlalchemy.engine): Database connection engine.
+    :return: (sqlalchemy.engine): DB connection engine.
     """
 
     if logger is None:
-        logger = helpers.MockLogger()
+        logger = helpers.utils.MockLogger()
 
     conn_string: str = "oracle+cx_oracle://" + username + ":" + password + "@" + database
     # print(conn_string)
@@ -36,7 +36,7 @@ def create_engine(
     except Exception as e:
         raise helpers.LoggedDatabaseError(
             logger,
-            "failed to connect to DB: {DB}\n{error}".format(DB=database, error=str(e)),
+            "Failed to connect to DB: {DB}\n{error}".format(DB=database, error=str(e)),
         )
 
     return engine
