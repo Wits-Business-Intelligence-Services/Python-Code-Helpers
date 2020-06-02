@@ -321,5 +321,4 @@ def generate_check_existence_of_table_query(table_name: str) -> str:
     query: str = "SELECT 1 from {table_name} where rownum < 2".format(
         table_name=table_name
     )
-    # query: str = "select * from information_schema.tables where table_name = '{table_name}'".format(table_name=table_name)
     return query

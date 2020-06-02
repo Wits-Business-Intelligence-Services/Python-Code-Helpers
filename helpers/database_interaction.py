@@ -46,10 +46,10 @@ def get_db_table_column_names(
     """
     Get column names of table on database. Checks for existence of table first.
 
-    :param engine: (sqlalchemy.engine): DB engine used for DB connection.
     :param table_name: (str): Name of table to perform operation on.
-    :return: (Optional[list]): List of column names, None if table does not exist.
+    :param engine: (sqlalchemy.engine): DB engine used for DB connection.
     :param logger: (logging.Logger): Logger to use for logging.
+    :return: (Optional[list]): List of column names, None if table does not exist.
     """
 
     if logger is None:
@@ -81,9 +81,9 @@ def get_db_table_row_count(
     """
     Get row count of table on database. Checks for existence of table first.
 
-    :param logger: (logging.Logger): Logger to use for logging.
-    :param engine: (sqlalchemy.engine): DB engine used for DB connection.
     :param table_name: (str): Name of table to perform operation on.
+    :param engine: (sqlalchemy.engine): DB engine used for DB connection.
+    :param logger: (logging.Logger): Logger to use for logging.
     :return: (int): Number of rows, None if table does not exist.
     """
 
@@ -110,15 +110,13 @@ def get_db_table_row_count(
             return None
 
 
-def truncate_table(
-    table_name: str, engine, logger: __Logger__ = None
-) -> None:
+def truncate_table(table_name: str, engine, logger: __Logger__ = None) -> None:
     """
     Truncate staging or prod table. Checks for existence of table first.
 
-    :param logger: (logging.logger): Logger to use for logging
-    :param engine: (sqlalchemy.engine): DB engine used for DB connection.
     :param table_name: (str): Name of table to perform operation on.
+    :param engine: (sqlalchemy.engine): DB engine used for DB connection.
+    :param logger: (logging.logger): Logger to use for logging
     :return: None
     """
 
@@ -140,15 +138,13 @@ def truncate_table(
         )
 
 
-def drop_table(
-    table_name: str, engine, logger: __Logger__ = None
-) -> None:
+def drop_table(table_name: str, engine, logger: __Logger__ = None) -> None:
     """
     Drop table. Checks for existence of table first.
 
-    :param logger: (logging.logger): Logger to use for logging.
-    :param engine: (sqlalchemy.engine): DB engine used for DB connection.
     :param table_name: (str): Name of table to perform operation on.
+    :param engine: (sqlalchemy.engine): DB engine used for DB connection.
+    :param logger: (logging.logger): Logger to use for logging.
     :return: None
     """
 
@@ -177,15 +173,13 @@ def create_table(
     logger: __Logger__ = None,
 ) -> None:
     """
-    Create table. If table already exists, check to see that the column names
-    match for compatibility.
 
+    :param data_results: (pd.DataFrame): Data to use for generating column names and data types.
+    :param table_name: (str): Name of table to perform operation on.
+    :param engine: (sqlalchemy.engine): DB engine used for DB connection.
     :param allow_nulls: (bool): Allow nulls in table.
     :param use_date_created: (bool): Include a 'DATE_CREATED' column with current date and time.
     :param logger: (logging.logger): Logger to use for logging.
-    :param engine: (sqlalchemy.engine): DB engine used for DB connection.
-    :param table_name: (str): Name of table to perform operation on.
-    :param data_results: (pd.DataFrame): Data to use for generating column names and data types.
     :return: None
     """
 
@@ -254,13 +248,13 @@ def upload_data_to_table(
     """
     Upload data in table_data DataFrame to table.
 
-    :param use_date_created: (bool): Include a 'DATE_CREATED' column with current date and time.
-    :param logger: (logging.logger): Logger to use for logging.
-    :param engine: (sqlalchemy.engine) DB engine used for DB connection.
-    :param table_name: (str): Name of table to perform operation on.
+    :param table_data: (pandas.DataFrame): data to be uploaded.
     :param upload_partition_size: (int): Number of rows to upload at a time.
-    :param table_data: (pd.DataFrame): data to be uploaded.
-    :return: None
+    :param table_name: (str): Name of table to perform operation on.
+    :param engine: (sqlalchemy.engine) DB engine used for DB connection.
+    :param use_date_created: (bool): Include a 'DATE_CREATED' column with current date and time.
+    :param logger: (logging.Logger): Logger to use for logging.
+    :return:
     """
 
     if logger is None:
@@ -335,14 +329,15 @@ def update_column_by_value(
     Update all rows in the production DB that have the old value in latest_prediction
     to have the new value.
 
-    :param column_name: (str): Name of column to update.
-    :param logger: (logging.logger): Logger to use for logging.
-    :param engine: (sqlalchemy.engine): DB engine used for DB connection.
-    :param table_name: (str): Name of table to perform operation on.
     :param old_value: (int): Value to select rows by.
     :param new_value: (int): Value to replace old value.
+    :param table_name: (str): Name of table to perform operation on.
+    :param column_name: (str): Name of column to update.
+    :param engine: (sqlalchemy.engine): DB engine used for DB connection.
+    :param logger: (logging.logger): Logger to use for logging.
     :return: None
     """
+
     if logger is None:
         logger = helpers.utils.MockLogger()
 
@@ -366,11 +361,7 @@ def update_column_by_value(
 
 
 def execute_select_query_on_db(
-    query: str,
-    success_msg: str,
-    error_msg: str,
-    engine,
-    logger: __Logger__ = None,
+    query: str, success_msg: str, error_msg: str, engine, logger: __Logger__ = None,
 ) -> __pd__.DataFrame:
     """
     Execute a returning select query.
@@ -379,8 +370,8 @@ def execute_select_query_on_db(
     :param success_msg: (str): Debug message for successful execution.
     :param error_msg: (str): Error message for failed execution.
     :param engine: (sqlalchemy.engine): DB engine used for DB connection.
-    :param logger: (logging.logger): Logger to use for logging.
-    :return: (pd.Dataframe): Date returned from DB.
+    :param logger: (logging.Logger): Logger to use for logging.
+    :return: (pandas.Dataframe): Date returned from DB.
     """
 
     if logger is None:
@@ -397,11 +388,7 @@ def execute_select_query_on_db(
 
 
 def execute_action_query_on_db(
-    query: str,
-    success_msg: str,
-    error_msg: str,
-    engine,
-    logger: __Logger__ = None,
+    query: str, success_msg: str, error_msg: str, engine, logger: __Logger__ = None,
 ) -> None:
     """
     Execute a non-returning, commit required query.
@@ -410,7 +397,7 @@ def execute_action_query_on_db(
     :param success_msg: (str): Debug message for successful execution.
     :param error_msg: (str): Error message for failed execution.
     :param engine: (sqlalchemy.engine): DB engine used for DB connection.
-    :param logger: (logging.logger): Logger to use for logging.
+    :param logger: (logging.Logger): Logger to use for logging.
     :return: None
     """
 

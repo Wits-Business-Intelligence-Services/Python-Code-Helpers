@@ -26,9 +26,7 @@ def create_engine(
 
     conn_string: str = "oracle+cx_oracle://" + username + ":" + password + "@" + database
     # print(conn_string)
-    engine = __sq__.create_engine(
-        conn_string, pool_size=30, max_overflow=-1
-    )
+    engine = __sq__.create_engine(conn_string, pool_size=30, max_overflow=-1)
 
     try:
         with ConnectionManager(engine):
@@ -50,6 +48,8 @@ def create_engine(
 class ConnectionManager:
     """
     Context manager class to open and close connections as required.
+
+    :param engine: (sqlalchemy.engine): Engine for connection.
     """
 
     def __init__(self, engine):

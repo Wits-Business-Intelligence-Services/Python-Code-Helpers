@@ -6,6 +6,14 @@ from os import mkdir as __mkdir__
 def setup_logging(
     log_folder: str, unique_log_name: str, logging_level: str
 ) -> __logging__.Logger:
+    """
+    Set up a logger with a standardised logging format.
+
+    :param log_folder: (str): Folder to hold log files.
+    :param unique_log_name: (str): Log file name.
+    :param logging_level: (str): Level for logger.
+    :return: (logging.Logger): A fully set up logger.
+    """
 
     # Set logging level
     if logging_level == "DEBUG":

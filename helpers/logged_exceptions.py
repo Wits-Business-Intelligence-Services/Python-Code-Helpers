@@ -2,8 +2,12 @@ import logging as __logging__
 
 
 class LoggedValueError(Exception):
+
     """
     ValueError, but with builtin logging.
+
+    :param logger: (logging.Logger): Logger for logging.
+    :param message: (str): Exception message to display.
     """
 
     def __init__(self, logger: __logging__.Logger, message: str):
@@ -21,6 +25,9 @@ class LoggedValueError(Exception):
 class LoggedDataError(Exception):
     """
     DataError, but with builtin logging.
+
+    :param logger: (logging.Logger): Logger for logging.
+    :param message: (str): Exception message to display.
     """
 
     def __init__(self, logger: __logging__.Logger, message: str):
@@ -36,6 +43,9 @@ class LoggedDataError(Exception):
 class LoggedDatabaseError(Exception):
     """
     DatabaseError, but with builtin logging.
+
+    :param logger: (logging.Logger): Logger for logging.
+    :param message: (str): Exception message to display.
     """
 
     def __init__(self, logger: __logging__.Logger, message: str):
@@ -53,6 +63,9 @@ class LoggedDatabaseError(Exception):
 class LoggedSubprocessError(Exception):
     """
     SubprocessError, but with builtin logging.
+
+    :param logger: (logging.Logger): Logger for logging.
+    :param message: (str): Exception message to display.
     """
 
     def __init__(self, logger: __logging__.Logger, message: str):

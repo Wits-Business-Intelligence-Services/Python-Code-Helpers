@@ -3,6 +3,21 @@ import enum
 
 
 class LoggingLevels(enum.Enum):
+    """
+    Enumeration of mock logger logging levels.
+
+    Supported levels are:
+        DEBUG
+
+        INFO
+
+        WARNING
+
+        ERROR
+
+        CRITICAL
+    """
+
     DEBUG = 0
     INFO = 1
     WARNING = 2
