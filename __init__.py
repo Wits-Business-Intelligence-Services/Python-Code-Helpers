@@ -22,6 +22,7 @@ __all__ = [
     "upload_data_to_table",
     "update_column_by_value",
     "execute_select_query_on_db",
+    "execute_action_query_on_db",
     "check_existence_of_table",
     "set_mock_logging_level",
     "LoggingLevels",
@@ -44,6 +45,7 @@ from helpers import (
     upload_data_to_table,
     update_column_by_value,
     execute_select_query_on_db,
+    execute_action_query_on_db,
     check_existence_of_table,
     current_db_compatible_time
 )
