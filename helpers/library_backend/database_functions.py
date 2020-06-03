@@ -119,6 +119,8 @@ def generate_table_creation_query(
     """
     Generate query for creating a table based on the data in an inputted DataFrame.
     Performs column name extraction and data type conversion.
+    Date types are infered from to_date(...) formatted column data for date in
+    the name of columns in the case of empty input DataFrames.
 
     :param data: (DataFrame): Data the table will be based on.
     :param table_name: (str): Name of new table to be created.
@@ -142,12 +144,15 @@ def generate_table_creation_query(
     db_table_cols = db_table_cols.str.replace("int32", "NUMBER")
 
     # All columns that are objects and have all values as to_date(...) strings will be dates on the DB
-    date_cols: list = [
-        x
-        for x in data.columns
-        if str(data[x].dtype) == "object"
-        and len(data[x][data[x].str.contains("to_date")]) == len(data)
-    ]
+    date_cols: list = []
+    for x in data.columns:
+        if str(data[x].dtype) == "object":
+            to_date_len = len(data[x][data[x].str.contains("to_date")])
+            if to_date_len == len(data) and to_date_len > 0:
+                date_cols.append(x)
+            elif "date" in x:
+                date_cols.append(x)
+
     for col in date_cols:
         db_table_cols[col] = "DATE"
 
