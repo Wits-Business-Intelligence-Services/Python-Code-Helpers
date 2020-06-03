@@ -29,7 +29,9 @@ def check_existence_of_table(
     if logger is None:
         logger = helpers.library_backend.MockLogger()
 
-    query: str = helpers.library_backend.generate_check_existence_of_table_query(table_name)
+    query: str = helpers.library_backend.generate_check_existence_of_table_query(
+        table_name
+    )
     with helpers.ConnectionManager(engine) as conn:
         try:
             result: __pd__.DataFrame = __pd__.read_sql(query, conn)
@@ -64,7 +66,9 @@ def get_db_table_column_names(
         logger = helpers.library_backend.MockLogger()
 
     if helpers.check_existence_of_table(table_name, engine):
-        query: str = helpers.library_backend.generate_column_names_of_db_table_query(table_name)
+        query: str = helpers.library_backend.generate_column_names_of_db_table_query(
+            table_name
+        )
 
         success_msg: str = "Successfully retrieved column names of '{table_name}'.".format(
             table_name=table_name
@@ -98,7 +102,9 @@ def get_db_table_row_count(
     if logger is None:
         logger = helpers.library_backend.MockLogger()
 
-    query: str = helpers.library_backend.generate_get_number_of_rows_of_db_table_query(table_name)
+    query: str = helpers.library_backend.generate_get_number_of_rows_of_db_table_query(
+        table_name
+    )
 
     success_msg: str = "Successfully retrieved row count for table '{table_name}'.".format(
         table_name=table_name
@@ -180,6 +186,7 @@ def create_table(
     logger: __Logger__ = None,
 ) -> None:
     """
+    Create a table based on the given DataFrame, automatically choosing data types.
 
     :param data_results: (pd.DataFrame): Data to use for generating column names and data types.
     :param table_name: (str): Name of table to perform operation on.
@@ -254,7 +261,7 @@ def upload_data_to_table(
     :param table_name: (str): Name of table to perform operation on.
     :param engine: (sqlalchemy.engine) DB engine used for DB connection.
     :param logger: (logging.Logger): Logger to use for logging.
-    :return:
+    :return: None
     """
 
     if logger is None:

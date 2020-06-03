@@ -26,7 +26,7 @@ __all__ = [
     "check_existence_of_table",
     "set_mock_logging_level",
     "LoggingLevels",
-    "current_db_compatible_time"
+    "current_db_compatible_time",
 ]
 
 from helpers import (
@@ -47,7 +47,7 @@ from helpers import (
     execute_select_query_on_db,
     execute_action_query_on_db,
     check_existence_of_table,
-    current_db_compatible_time
+    current_db_compatible_time,
 )
 
 from helpers.library_backend import set_mock_logging_level, LoggingLevels

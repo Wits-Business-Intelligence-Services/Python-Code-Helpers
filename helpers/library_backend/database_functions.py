@@ -114,9 +114,7 @@ def __generate_table_creation_query__(column_data: str, table_name: str) -> str:
 
 
 def generate_table_creation_query(
-    data: __pd__.DataFrame,
-    table_name: str,
-    allow_nulls: bool = True,
+    data: __pd__.DataFrame, table_name: str, allow_nulls: bool = True,
 ) -> str:
     """
     Generate query for creating a table based on the data in an inputted DataFrame.
@@ -136,7 +134,7 @@ def generate_table_creation_query(
     # convert series data to string so we can replace types
     db_table_cols = db_table_cols.astype("str")
 
-    # replace python/ numpy DataFrame with oracle sql DataFrame
+    # replace python / numpy data types with oracle sql data types
     db_table_cols = db_table_cols.str.replace("object", "VARCHAR2(200)")
     db_table_cols = db_table_cols.str.replace("float32", "FLOAT(32)")
     db_table_cols = db_table_cols.str.replace("float64", "FLOAT(64)")
