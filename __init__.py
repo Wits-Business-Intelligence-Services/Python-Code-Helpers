@@ -25,6 +25,7 @@ __all__ = [
     "check_existence_of_table",
     "set_mock_logging_level",
     "LoggingLevels",
+    "current_db_compatible_time"
 ]
 
 from helpers import (
@@ -44,6 +45,7 @@ from helpers import (
     update_column_by_value,
     execute_select_query_on_db,
     check_existence_of_table,
+    current_db_compatible_time
 )
 
 from helpers.utils import set_mock_logging_level, LoggingLevels

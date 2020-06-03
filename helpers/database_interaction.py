@@ -6,6 +6,14 @@ from logging import Logger as __Logger__
 import time as __time__
 
 
+def current_db_compatible_time() -> str:
+    date_created = __time__.strftime("%d/%b/%y %H:%M:%S").upper()
+    date_str: str = "to_date('{date_created}','dd/mon/yy hh24:mi:ss')".format(
+        date_created=date_created
+    )
+    return date_str
+
+
 def check_existence_of_table(
     table_name: str, engine, logger: __Logger__ = None
 ) -> bool:
