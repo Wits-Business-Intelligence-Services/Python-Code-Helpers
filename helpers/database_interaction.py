@@ -27,9 +27,9 @@ def check_existence_of_table(
     """
 
     if logger is None:
-        logger = helpers.utils.MockLogger()
+        logger = helpers.library_backend.MockLogger()
 
-    query: str = helpers.utils.generate_check_existence_of_table_query(table_name)
+    query: str = helpers.library_backend.generate_check_existence_of_table_query(table_name)
     with helpers.ConnectionManager(engine) as conn:
         try:
             result: __pd__.DataFrame = __pd__.read_sql(query, conn)
@@ -61,10 +61,10 @@ def get_db_table_column_names(
     """
 
     if logger is None:
-        logger = helpers.utils.MockLogger()
+        logger = helpers.library_backend.MockLogger()
 
     if helpers.check_existence_of_table(table_name, engine):
-        query: str = helpers.utils.generate_column_names_of_db_table_query(table_name)
+        query: str = helpers.library_backend.generate_column_names_of_db_table_query(table_name)
 
         success_msg: str = "Successfully retrieved column names of '{table_name}'.".format(
             table_name=table_name
@@ -96,9 +96,9 @@ def get_db_table_row_count(
     """
 
     if logger is None:
-        logger = helpers.utils.MockLogger()
+        logger = helpers.library_backend.MockLogger()
 
-    query: str = helpers.utils.generate_get_number_of_rows_of_db_table_query(table_name)
+    query: str = helpers.library_backend.generate_get_number_of_rows_of_db_table_query(table_name)
 
     success_msg: str = "Successfully retrieved row count for table '{table_name}'.".format(
         table_name=table_name
@@ -129,10 +129,10 @@ def truncate_table(table_name: str, engine, logger: __Logger__ = None) -> None:
     """
 
     if logger is None:
-        logger = helpers.utils.MockLogger()
+        logger = helpers.library_backend.MockLogger()
 
     if helpers.check_existence_of_table(table_name, engine):
-        query: str = helpers.utils.generate_trunc_db_table_query(table_name)
+        query: str = helpers.library_backend.generate_trunc_db_table_query(table_name)
 
         success_msg: str = "Successfully truncated table '{table_name}'.".format(
             table_name=table_name
@@ -157,10 +157,10 @@ def drop_table(table_name: str, engine, logger: __Logger__ = None) -> None:
     """
 
     if logger is None:
-        logger = helpers.utils.MockLogger()
+        logger = helpers.library_backend.MockLogger()
 
     if helpers.check_existence_of_table(table_name, engine):
-        query: str = helpers.utils.generate_drop_db_table_query(table_name)
+        query: str = helpers.library_backend.generate_drop_db_table_query(table_name)
 
         success_msg: str = "Successfully dropped '{table_name}'".format(
             table_name=table_name
@@ -192,15 +192,15 @@ def create_table(
     """
 
     if logger is None:
-        logger = helpers.utils.MockLogger()
+        logger = helpers.library_backend.MockLogger()
 
     # Check if table already exists and get it's column names.
     db_col_names: __Optional__[list] = get_db_table_column_names(table_name, engine)
     # If the table does not exist
     if not db_col_names:
         # Formulate and execute query to create table on DB
-        create_query: str = helpers.utils.generate_table_creation_query(
-            data_results, table_name, allow_nulls, use_date_created,
+        create_query: str = helpers.library_backend.generate_table_creation_query(
+            data_results, table_name, allow_nulls,
         )
 
         success_msg: str = "Created table '{table_name}'.".format(table_name=table_name)
@@ -266,7 +266,7 @@ def upload_data_to_table(
     """
 
     if logger is None:
-        logger = helpers.utils.MockLogger()
+        logger = helpers.library_backend.MockLogger()
 
     iterator_index: int = 0
     data_num_records: int = len(table_data.index)
@@ -280,7 +280,7 @@ def upload_data_to_table(
 
     while (iterator_index + 1) * upload_partition_size < data_num_records:
 
-        query: str = helpers.utils.generate_insert_query(
+        query: str = helpers.library_backend.generate_insert_query(
             table_data[
                 iterator_index
                 * upload_partition_size : (iterator_index + 1)
@@ -306,7 +306,7 @@ def upload_data_to_table(
         iterator_index += 1
 
     # Final non divisible rows
-    query: str = helpers.utils.generate_insert_query(
+    query: str = helpers.library_backend.generate_insert_query(
         table_data[iterator_index * upload_partition_size :], table_name,
     )
 
@@ -347,9 +347,9 @@ def update_column_by_value(
     """
 
     if logger is None:
-        logger = helpers.utils.MockLogger()
+        logger = helpers.library_backend.MockLogger()
 
-    query: str = helpers.utils.generate_update_column_by_value_query(
+    query: str = helpers.library_backend.generate_update_column_by_value_query(
         table_name, column_name, old_value, new_value,
     )
     success_msg: str = "Updated rows in '{table_name}' table: '{column_name}'='{old_value}' -> '{column_name}'='{new_value}'.".format(
@@ -383,7 +383,7 @@ def execute_select_query_on_db(
     """
 
     if logger is None:
-        logger = helpers.utils.MockLogger()
+        logger = helpers.library_backend.MockLogger()
 
     try:
         with helpers.ConnectionManager(engine) as conn:
@@ -410,7 +410,7 @@ def execute_action_query_on_db(
     """
 
     if logger is None:
-        logger = helpers.utils.MockLogger()
+        logger = helpers.library_backend.MockLogger()
 
     try:
         with helpers.ConnectionManager(engine) as conn:

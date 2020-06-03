@@ -22,7 +22,7 @@ def create_engine(
     """
 
     if logger is None:
-        logger = helpers.utils.MockLogger()
+        logger = helpers.library_backend.MockLogger()
 
     conn_string: str = "oracle+cx_oracle://" + username + ":" + password + "@" + database
     # print(conn_string)
