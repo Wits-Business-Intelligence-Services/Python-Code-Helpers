@@ -143,6 +143,16 @@ def generate_table_creation_query(
     db_table_cols = db_table_cols.str.replace("int64", "NUMBER")
     db_table_cols = db_table_cols.str.replace("int32", "NUMBER")
 
+    # All columns that are objects and have all values as to_date(...) strings will be dates on the DB
+    date_cols: list = [
+        x
+        for x in data.columns
+        if str(data[x].dtype) == "object"
+        and len(data[x][data[x].str.contains("to_date")]) == len(data)
+    ]
+    for col in date_cols:
+        db_table_cols[col] = "DATE"
+
     # convert series to DataFrame
     db_table_cols_frame: __pd__.DataFrame = db_table_cols.to_frame()
 
