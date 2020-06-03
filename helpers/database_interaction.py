@@ -177,7 +177,6 @@ def create_table(
     table_name: str,
     engine,
     allow_nulls: bool = True,
-    use_date_created: bool = False,
     logger: __Logger__ = None,
 ) -> None:
     """
@@ -186,7 +185,6 @@ def create_table(
     :param table_name: (str): Name of table to perform operation on.
     :param engine: (sqlalchemy.engine): DB engine used for DB connection.
     :param allow_nulls: (bool): Allow nulls in table.
-    :param use_date_created: (bool): Include a 'DATE_CREATED' column with current date and time.
     :param logger: (logging.logger): Logger to use for logging.
     :return: None
     """
@@ -219,10 +217,6 @@ def create_table(
             x.upper().replace(" ", "_") for x in list(data_results.columns)
         ]
 
-        # Add DATE_CREATED since it is added later
-        if use_date_created:
-            new_data_col_names.append("DATE_CREATED")
-
         # Convert to sets for comparison operations
         db_col_names_set: set = set(db_col_names)
         new_data_col_names_set: set = set(new_data_col_names)
@@ -250,7 +244,6 @@ def upload_data_to_table(
     upload_partition_size: int,
     table_name: str,
     engine,
-    use_date_created: bool = False,
     logger: __Logger__ = None,
 ) -> None:
     """
@@ -260,7 +253,6 @@ def upload_data_to_table(
     :param upload_partition_size: (int): Number of rows to upload at a time.
     :param table_name: (str): Name of table to perform operation on.
     :param engine: (sqlalchemy.engine) DB engine used for DB connection.
-    :param use_date_created: (bool): Include a 'DATE_CREATED' column with current date and time.
     :param logger: (logging.Logger): Logger to use for logging.
     :return:
     """
@@ -270,13 +262,6 @@ def upload_data_to_table(
 
     iterator_index: int = 0
     data_num_records: int = len(table_data.index)
-
-    date_created = __time__.strftime("%d/%b/%y %H:%M:%S").upper()
-    date_str: str = "to_date('{date_created}','dd/mon/yy hh24:mi:ss')".format(
-        date_created=date_created
-    )
-    if use_date_created:
-        table_data["DATE_CREATED"] = date_str
 
     while (iterator_index + 1) * upload_partition_size < data_num_records:
 

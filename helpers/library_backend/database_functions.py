@@ -117,16 +117,14 @@ def generate_table_creation_query(
     data: __pd__.DataFrame,
     table_name: str,
     allow_nulls: bool = True,
-    use_date_created: bool = False,
 ) -> str:
     """
     Generate query for creating a table based on the data in an inputted DataFrame.
     Performs column name extraction and data type conversion.
 
-    :param use_date_created: (bool): Include a 'DATE_CREATED' column with current date and time.
-    :param allow_nulls: (bool): Allow nulls in table.
     :param data: (DataFrame): Data the table will be based on.
     :param table_name: (str): Name of new table to be created.
+    :param allow_nulls: (bool): Allow nulls in table.
     :return: (str): Query for creating table.
     """
 
@@ -165,10 +163,6 @@ def generate_table_creation_query(
     # Add not null clause to all rows
     if not allow_nulls:
         values = ["{x} NOT NULL".format(x=x) for x in values]
-
-    # Add DATE_CREATED column column
-    if use_date_created:
-        values.append("DATE_CREATED DATE")
 
     # convert list to string
     values = ",\n".join(values)
