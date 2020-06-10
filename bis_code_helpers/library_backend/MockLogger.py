@@ -1,8 +1,8 @@
-import helpers
-import enum
+import bis_code_helpers
+import enum as __enum__
 
 
-class LoggingLevels(enum.Enum):
+class LoggingLevels(__enum__.Enum):
     """
     Enumeration of mock logger logging levels.
 

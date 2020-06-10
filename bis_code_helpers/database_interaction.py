@@ -1,5 +1,5 @@
 import pandas as __pd__
-import helpers
+import bis_code_helpers
 from typing import Optional as __Optional__
 import sqlalchemy as __sq__
 from logging import Logger as __Logger__
@@ -27,12 +27,12 @@ def check_existence_of_table(
     """
 
     if logger is None:
-        logger = helpers.library_backend.MockLogger()
+        logger = bis_code_helpers.library_backend.MockLogger()
 
-    query: str = helpers.library_backend.generate_check_existence_of_table_query(
+    query: str = bis_code_helpers.library_backend.generate_check_existence_of_table_query(
         table_name
     )
-    with helpers.ConnectionManager(engine) as conn:
+    with bis_code_helpers.ConnectionManager(engine) as conn:
         try:
             result: __pd__.DataFrame = __pd__.read_sql(query, conn)
             if "1" in result.columns:
@@ -47,7 +47,7 @@ def check_existence_of_table(
                 )
                 return False
             else:
-                raise helpers.LoggedDatabaseError(logger, str(error))
+                raise bis_code_helpers.LoggedDatabaseError(logger, str(error))
 
 
 def get_db_table_column_names(
@@ -63,10 +63,10 @@ def get_db_table_column_names(
     """
 
     if logger is None:
-        logger = helpers.library_backend.MockLogger()
+        logger = bis_code_helpers.library_backend.MockLogger()
 
-    if helpers.check_existence_of_table(table_name, engine):
-        query: str = helpers.library_backend.generate_column_names_of_db_table_query(
+    if bis_code_helpers.check_existence_of_table(table_name, engine):
+        query: str = bis_code_helpers.library_backend.generate_column_names_of_db_table_query(
             table_name
         )
 
@@ -77,7 +77,7 @@ def get_db_table_column_names(
             table_name=table_name
         )
 
-        result: __pd__.DataFrame = helpers.execute_select_query_on_db(
+        result: __pd__.DataFrame = bis_code_helpers.execute_select_query_on_db(
             query, success_msg, error_msg, engine, logger
         )
         col_names: list = list(result.columns)
@@ -100,9 +100,9 @@ def get_db_table_row_count(
     """
 
     if logger is None:
-        logger = helpers.library_backend.MockLogger()
+        logger = bis_code_helpers.library_backend.MockLogger()
 
-    query: str = helpers.library_backend.generate_get_number_of_rows_of_db_table_query(
+    query: str = bis_code_helpers.library_backend.generate_get_number_of_rows_of_db_table_query(
         table_name
     )
 
@@ -119,7 +119,7 @@ def get_db_table_row_count(
         )
         count: int = result["COUNT(*)"].iloc[0]
         return count
-    except helpers.LoggedDatabaseError as error:
+    except bis_code_helpers.LoggedDatabaseError as error:
         if "table or view does not exist" in str(error):
             return None
 
@@ -135,10 +135,12 @@ def truncate_table(table_name: str, engine, logger: __Logger__ = None) -> None:
     """
 
     if logger is None:
-        logger = helpers.library_backend.MockLogger()
+        logger = bis_code_helpers.library_backend.MockLogger()
 
-    if helpers.check_existence_of_table(table_name, engine):
-        query: str = helpers.library_backend.generate_trunc_db_table_query(table_name)
+    if bis_code_helpers.check_existence_of_table(table_name, engine):
+        query: str = bis_code_helpers.library_backend.generate_trunc_db_table_query(
+            table_name
+        )
 
         success_msg: str = "Successfully truncated table '{table_name}'.".format(
             table_name=table_name
@@ -147,7 +149,7 @@ def truncate_table(table_name: str, engine, logger: __Logger__ = None) -> None:
             table_name=table_name
         )
 
-        helpers.execute_action_query_on_db(
+        bis_code_helpers.execute_action_query_on_db(
             query, success_msg, error_msg, engine, logger
         )
 
@@ -163,17 +165,19 @@ def drop_table(table_name: str, engine, logger: __Logger__ = None) -> None:
     """
 
     if logger is None:
-        logger = helpers.library_backend.MockLogger()
+        logger = bis_code_helpers.library_backend.MockLogger()
 
-    if helpers.check_existence_of_table(table_name, engine):
-        query: str = helpers.library_backend.generate_drop_db_table_query(table_name)
+    if bis_code_helpers.check_existence_of_table(table_name, engine):
+        query: str = bis_code_helpers.library_backend.generate_drop_db_table_query(
+            table_name
+        )
 
         success_msg: str = "Successfully dropped '{table_name}'".format(
             table_name=table_name
         )
         error_msg: str = "Failed to drop '{table_name}'".format(table_name=table_name)
 
-        helpers.execute_action_query_on_db(
+        bis_code_helpers.execute_action_query_on_db(
             query, success_msg, error_msg, engine, logger
         )
 
@@ -197,14 +201,14 @@ def create_table(
     """
 
     if logger is None:
-        logger = helpers.library_backend.MockLogger()
+        logger = bis_code_helpers.library_backend.MockLogger()
 
     # Check if table already exists and get it's column names.
     db_col_names: __Optional__[list] = get_db_table_column_names(table_name, engine)
     # If the table does not exist
     if not db_col_names:
         # Formulate and execute query to create table on DB
-        create_query: str = helpers.library_backend.generate_table_creation_query(
+        create_query: str = bis_code_helpers.library_backend.generate_table_creation_query(
             data_results, table_name, allow_nulls,
         )
 
@@ -213,7 +217,7 @@ def create_table(
             table_name=table_name
         )
 
-        helpers.execute_action_query_on_db(
+        bis_code_helpers.execute_action_query_on_db(
             create_query, success_msg, error_msg, engine, logger
         )
 
@@ -232,7 +236,7 @@ def create_table(
         if db_col_names_set != new_data_col_names_set:
             union: set = db_col_names_set.union(new_data_col_names_set)
             diff: set = (union - new_data_col_names_set).union(union - db_col_names_set)
-            raise helpers.LoggedDataError(
+            raise bis_code_helpers.LoggedDataError(
                 logger,
                 "Local data columns do not match DB columns: {diff} for table '{table_name}'".format(
                     diff=diff, table_name=table_name
@@ -265,14 +269,14 @@ def upload_data_to_table(
     """
 
     if logger is None:
-        logger = helpers.library_backend.MockLogger()
+        logger = bis_code_helpers.library_backend.MockLogger()
 
     iterator_index: int = 0
     data_num_records: int = len(table_data.index)
 
     while (iterator_index + 1) * upload_partition_size < data_num_records:
 
-        query: str = helpers.library_backend.generate_insert_query(
+        query: str = bis_code_helpers.library_backend.generate_insert_query(
             table_data[
                 iterator_index
                 * upload_partition_size : (iterator_index + 1)
@@ -292,13 +296,13 @@ def upload_data_to_table(
             table_name=table_name,
         )
 
-        helpers.execute_action_query_on_db(
+        bis_code_helpers.execute_action_query_on_db(
             query, success_msg, error_msg, engine, logger
         )
         iterator_index += 1
 
     # Final non divisible rows
-    query: str = helpers.library_backend.generate_insert_query(
+    query: str = bis_code_helpers.library_backend.generate_insert_query(
         table_data[iterator_index * upload_partition_size :], table_name,
     )
 
@@ -314,7 +318,9 @@ def upload_data_to_table(
         table_name=table_name,
     )
 
-    helpers.execute_action_query_on_db(query, success_msg, error_msg, engine, logger)
+    bis_code_helpers.execute_action_query_on_db(
+        query, success_msg, error_msg, engine, logger
+    )
 
 
 def update_column_by_value(
@@ -339,9 +345,9 @@ def update_column_by_value(
     """
 
     if logger is None:
-        logger = helpers.library_backend.MockLogger()
+        logger = bis_code_helpers.library_backend.MockLogger()
 
-    query: str = helpers.library_backend.generate_update_column_by_value_query(
+    query: str = bis_code_helpers.library_backend.generate_update_column_by_value_query(
         table_name, column_name, old_value, new_value,
     )
     success_msg: str = "Updated rows in '{table_name}' table: '{column_name}'='{old_value}' -> '{column_name}'='{new_value}'.".format(
@@ -357,7 +363,9 @@ def update_column_by_value(
         column_name=column_name,
     )
 
-    helpers.execute_action_query_on_db(query, success_msg, error_msg, engine, logger)
+    bis_code_helpers.execute_action_query_on_db(
+        query, success_msg, error_msg, engine, logger
+    )
 
 
 def execute_select_query_on_db(
@@ -375,15 +383,15 @@ def execute_select_query_on_db(
     """
 
     if logger is None:
-        logger = helpers.library_backend.MockLogger()
+        logger = bis_code_helpers.library_backend.MockLogger()
 
     try:
-        with helpers.ConnectionManager(engine) as conn:
+        with bis_code_helpers.ConnectionManager(engine) as conn:
             result: __pd__.DataFrame = __pd__.read_sql(query, conn)
             logger.debug(success_msg)
     except Exception as e:
         logger.error(error_msg)
-        raise helpers.LoggedDatabaseError(logger, str(e))
+        raise bis_code_helpers.LoggedDatabaseError(logger, str(e))
     return result
 
 
@@ -402,14 +410,14 @@ def execute_action_query_on_db(
     """
 
     if logger is None:
-        logger = helpers.library_backend.MockLogger()
+        logger = bis_code_helpers.library_backend.MockLogger()
 
     try:
-        with helpers.ConnectionManager(engine) as conn:
+        with bis_code_helpers.ConnectionManager(engine) as conn:
             trans = conn.begin()
             conn.execute(query)
             trans.commit()
             logger.debug(success_msg)
     except Exception as e:
         logger.error(error_msg)
-        raise helpers.LoggedDatabaseError(logger, str(e))
+        raise bis_code_helpers.LoggedDatabaseError(logger, str(e))

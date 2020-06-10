@@ -1,6 +1,6 @@
 import sqlalchemy as __sq__
 from logging import Logger as __Logger__
-import helpers
+import bis_code_helpers
 
 
 # ----------------------------------------------------
@@ -22,7 +22,7 @@ def create_engine(
     """
 
     if logger is None:
-        logger = helpers.library_backend.MockLogger()
+        logger = bis_code_helpers.library_backend.MockLogger()
 
     conn_string: str = "oracle+cx_oracle://" + username + ":" + password + "@" + database
     # print(conn_string)
@@ -32,7 +32,7 @@ def create_engine(
         with ConnectionManager(engine):
             logger.debug("Got DB Connection: " + database)
     except Exception as e:
-        raise helpers.LoggedDatabaseError(
+        raise bis_code_helpers.LoggedDatabaseError(
             logger,
             "Failed to connect to DB: {DB}\n{error}".format(DB=database, error=str(e)),
         )
