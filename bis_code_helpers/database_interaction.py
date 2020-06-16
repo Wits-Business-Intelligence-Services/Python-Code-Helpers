@@ -4,6 +4,7 @@ from typing import Optional as __Optional__
 import sqlalchemy as __sq__
 from logging import Logger as __Logger__
 import time as __time__
+from numpy import object as __np_object__
 
 
 def current_db_compatible_time() -> str:
@@ -273,6 +274,12 @@ def upload_data_to_table(
 
     iterator_index: int = 0
     data_num_records: int = len(table_data.index)
+
+    # Strip illegal characters
+    for col_name in table_data.columns:
+        if table_data[col_name].dtype == __np_object__ and table_data[col_name].str.contains("to_date").sum() == 0:
+            table_data[col_name].replace({"'": ""}, regex=True, inplace=True)
+            table_data[col_name].replace({",": ""}, inplace=True)
 
     while (iterator_index + 1) * upload_partition_size < data_num_records:
 

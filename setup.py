@@ -22,7 +22,7 @@ VERSION = '1.0.0'
 
 # What packages are required for this module to be executed?
 REQUIRED = [
-     'sqlalchemy', 'pandas', 'cx_oracle',
+     'sqlalchemy', 'pandas', 'cx_oracle', 'numpy'
 ]
 
 # What packages are optional?
