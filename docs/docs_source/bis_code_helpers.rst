@@ -55,6 +55,16 @@ Database Interaction
         execute_select_query_on_db,
         execute_action_query_on_db
 
+Run external command
+============================================
+
+.. automodule:: bis_code_helpers
+    :noindex:
+    :members:
+        run_external_command
+
+
+
 Logged Exceptions
 ============================================
 
