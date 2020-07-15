@@ -1,6 +1,7 @@
 import pandas as __pd__
 from typing import Callable as __Callable__
 import re as __re__
+import numpy as __np__
 
 
 # ----------------------------------------------------
@@ -127,6 +128,8 @@ def generate_table_creation_query(
     :param allow_nulls: (bool): Allow nulls in table.
     :return: (str): Query for creating table.
     """
+    data = data.sample(n=min(max(50000, len(data) // 3), len(data)), random_state=1).copy()
+    #data = data.copy()
 
     # get data types
     db_table_cols: __pd__.Series = data.dtypes
@@ -137,7 +140,7 @@ def generate_table_creation_query(
     db_table_cols = db_table_cols.astype("str")
 
     # replace python / numpy data types with oracle sql data types
-    db_table_cols = db_table_cols.str.replace("object", "VARCHAR2(200)")
+    # db_table_cols = db_table_cols.str.replace("object", "VARCHAR2(200)")
     db_table_cols = db_table_cols.str.replace("float32", "FLOAT(32)")
     db_table_cols = db_table_cols.str.replace("float64", "FLOAT(64)")
     db_table_cols = db_table_cols.str.replace("int64", "NUMBER")
@@ -145,16 +148,40 @@ def generate_table_creation_query(
 
     # All columns that are objects and have all values as to_date(...) strings will be dates on the DB
     date_cols: list = []
+    string_col_pairs: list = []
+    nan_col_pairs: list = []
     for x in data.columns:
         if str(data[x].dtype) == "object":
-            to_date_len = len(data[x][data[x].str.contains("to_date")])
-            if to_date_len == len(data) and to_date_len > 0:
-                date_cols.append(x)
-            elif "date" in x:
-                date_cols.append(x)
+            data[x] = data[x].astype(__np__.str)
+            # Check if date
+            try:
+                to_date_len = len(data[x][data[x].str.contains("to_date")])
+                if to_date_len == len(data) and to_date_len > 0:
+                    date_cols.append(x)
+                    continue
+            except ValueError as e:
+                if (
+                    not "Cannot mask with non-boolean array containing NA / NaN values"
+                    in str(e)
+                ):
+                    raise ValueError(e)
+
+            # If not date
+            col_len: int = data[x].map(len).max()
+            string_col_pairs.append((x, col_len + (10 - (col_len % 10))))
+        else:
+            if data[x].isnull().values.any():
+                if db_table_cols[x] == "FLOAT(32)":
+                    nan_col_pairs.append((x, "BINARY_FLOAT"))
+                elif db_table_cols[x] == "FLOAT(64)":
+                    nan_col_pairs.append((x, "BINARY_DOUBLE"))
 
     for col in date_cols:
         db_table_cols[col] = "DATE"
+    for col, length in string_col_pairs:
+        db_table_cols[col] = "VARCHAR2({})".format(length)
+    for col, t in nan_col_pairs:
+        db_table_cols[col] = t
 
     # convert series to DataFrame
     db_table_cols_frame: __pd__.DataFrame = db_table_cols.to_frame()
@@ -236,8 +263,9 @@ def generate_insert_query(data: __pd__.DataFrame, table_name: str) -> str:
     data = data.copy()
 
     data_subset: __pd__.DataFrame = data.loc[:, data.dtypes == object]
+    data_subset = data_subset.astype(__np__.str)
     data_subset = data_subset.applymap(
-        lambda x: "{}{}{}".format("'", x[:100], "'")
+        lambda x: "{}{}{}".format("'", x, "'")
         if not isinstance(x, type(None)) and ("to_date" not in x)
         else x
     )
@@ -245,7 +273,7 @@ def generate_insert_query(data: __pd__.DataFrame, table_name: str) -> str:
     data.loc[:, data.dtypes == object] = data_subset
 
     # Handle None values
-    data = data.applymap(lambda x: "NULL" if isinstance(x, type(None)) else x)
+    data = data.applymap(lambda x: "NULL" if (isinstance(x, type(None))) else x)
 
     insert_data = data.to_string(header=False, index=False, index_names=False).split(
         "\n"
@@ -254,7 +282,7 @@ def generate_insert_query(data: __pd__.DataFrame, table_name: str) -> str:
     # Save whitespaces in data
     values: list = [
         __re__.sub(
-            r"[a-zA-Z0-9]( |, | & )[a-zA-Z0-9]",
+            r"[a-zA-Z0-9]( |, | & | - )[a-zA-Z0-9]",
             lambda x: regex_whitespace_saver(x.group()),
             ele,
         )
@@ -262,10 +290,11 @@ def generate_insert_query(data: __pd__.DataFrame, table_name: str) -> str:
     ]
 
     values = [",".join(ele.split()) for ele in values]
-    values = [r.replace("NaN", "'NaN'") for r in values]
+    values = [r.replace("NaN", "NULL") for r in values]
+    values = [r.replace("nan", "NULL") for r in values]
     values = [
         __re__.sub(
-            r"[a-zA-Z0-9](___|,___|___&___)[a-zA-Z0-9]",
+            r"[a-zA-Z0-9](___|,___|___&___|___-___)[a-zA-Z0-9]",
             lambda x: regex_whitespace_restorer(x.group()),
             ele,
         )
