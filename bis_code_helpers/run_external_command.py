@@ -17,6 +17,6 @@ def run_external_command(command_arg_list: list) -> str:
     # Check that the return code is a success.
     p.check_returncode()
 
-    stdout: str = str(p.stdout)
+    stdout: str = p.stdout.decode()
 
     return stdout
