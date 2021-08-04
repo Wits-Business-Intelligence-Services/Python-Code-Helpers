@@ -1,4 +1,6 @@
 import pandas as __pd__
+import sqlalchemy.engine
+
 import bis_code_helpers
 from typing import Optional as __Optional__
 import sqlalchemy as __sq__
@@ -403,7 +405,7 @@ def execute_select_query_on_db(
 
 
 def execute_action_query_on_db(
-    query: str, success_msg: str, error_msg: str, engine, logger: __Logger__ = None,
+    query: str, success_msg: str, error_msg: str, engine: sqlalchemy.engine.Engine, logger: __Logger__ = None,
 ) -> None:
     """
     Execute a non-returning, commit required query.
@@ -420,10 +422,9 @@ def execute_action_query_on_db(
         logger = bis_code_helpers.library_backend.MockLogger()
 
     try:
-        with bis_code_helpers.ConnectionManager(engine) as conn:
-            trans = conn.begin()
-            conn.execute(query)
-            trans.commit()
+        with engine.connect() as conn:
+            with conn.begin():
+                conn.execute(query)
             logger.debug(success_msg)
     except Exception as e:
         logger.error(error_msg)
