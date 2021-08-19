@@ -179,7 +179,7 @@ def generate_table_creation_query(
     for col in date_cols:
         db_table_cols[col] = "DATE"
     for col, length in string_col_pairs:
-        db_table_cols[col] = "VARCHAR2({})".format(length)
+        db_table_cols[col] = "VARCHAR2({})".format(1 << ((length*2)-1).bit_length())
     for col, t in nan_col_pairs:
         db_table_cols[col] = t
 
