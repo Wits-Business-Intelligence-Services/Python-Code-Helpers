@@ -154,7 +154,13 @@ def generate_table_creation_query(
     date_cols: list = []
     string_col_pairs: list = []
     nan_col_pairs: list = []
+
+    oracle_keywords: list = ["default"]
+
     for x in data.columns:
+        # Oracle keywords
+        if x in oracle_keywords:
+            x = f'"{x}"'
         if str(data[x].dtype) == "object":
             data[x] = data[x].astype(__np__.str)
             # Check if date
