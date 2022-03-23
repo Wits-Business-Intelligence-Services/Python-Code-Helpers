@@ -168,7 +168,7 @@ def generate_table_creation_query(
 
             # If not date
             col_len: int = data[x].map(len).max()
-            string_col_pairs.append((x, col_len + (10 - (col_len % 10))))
+            string_col_pairs.append((x, int(col_len + (10 - (col_len % 10)))))
         else:
             if data[x].isnull().values.any():
                 if db_table_cols[x] == "FLOAT(32)":
