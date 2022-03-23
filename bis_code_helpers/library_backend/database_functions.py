@@ -179,7 +179,11 @@ def generate_table_creation_query(
     for col in date_cols:
         db_table_cols[col] = "DATE"
     for col, length in string_col_pairs:
-        db_table_cols[col] = "VARCHAR2({})".format(1 << ((length*2)-1).bit_length())
+        rounded_up_length: int = 1 << ((length*2)-1).bit_length()
+        if rounded_up_length <= 4000:
+            db_table_cols[col] = f"VARCHAR2({rounded_up_length})"
+        else:
+            db_table_cols[col] = "CLOB"
     for col, t in nan_col_pairs:
         db_table_cols[col] = t
 
