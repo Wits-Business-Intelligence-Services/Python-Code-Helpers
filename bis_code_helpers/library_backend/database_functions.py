@@ -1,7 +1,10 @@
+import math
+
 import pandas as __pd__
 from typing import Callable as __Callable__
 import re as __re__
 import numpy as __np__
+import math as __math__
 
 
 # ----------------------------------------------------
@@ -168,6 +171,8 @@ def generate_table_creation_query(
 
             # If not date
             col_len: int = data[x].map(len).max()
+            if math.isnan(col_len):
+                col_len = 10
             string_col_pairs.append((x, int(col_len + (10 - (col_len % 10)))))
         else:
             if data[x].isnull().values.any():
