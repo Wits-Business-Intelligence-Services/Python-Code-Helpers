@@ -148,6 +148,7 @@ def generate_table_creation_query(
     db_table_cols = db_table_cols.str.replace("float64", "FLOAT(64)")
     db_table_cols = db_table_cols.str.replace("int64", "NUMBER")
     db_table_cols = db_table_cols.str.replace("int32", "NUMBER")
+    db_table_cols = db_table_cols.str.replace("bool", "TINYINT")
 
     # All columns that are objects and have all values as to_date(...) strings will be dates on the DB
     date_cols: list = []
@@ -185,10 +186,9 @@ def generate_table_creation_query(
         db_table_cols[col] = "DATE"
     for col, length in string_col_pairs:
         rounded_up_length: int = 1 << ((length*2)-1).bit_length()
-        if rounded_up_length <= 4000:
-            db_table_cols[col] = f"VARCHAR2({rounded_up_length})"
-        else:
-            db_table_cols[col] = "CLOB"
+        if rounded_up_length > 4000:
+            rounded_up_length = 4000
+        db_table_cols[col] = f"VARCHAR2({rounded_up_length})"
     for col, t in nan_col_pairs:
         db_table_cols[col] = t
 
