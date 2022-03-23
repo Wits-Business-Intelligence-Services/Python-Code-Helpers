@@ -132,10 +132,17 @@ def generate_table_creation_query(
     :return: (str): Query for creating table.
     """
     data = data.sample(n=min(max(50000, len(data) // 3), len(data)), random_state=1).copy()
-    #data = data.copy()
+
+    oracle_keywords: list = ["default"]
+    keyword_columns: list = [x for x in data.columns if x in oracle_keywords]
+    if len(keyword_columns) > 0:
+        columns_to_rename: dict = {}
+        [columns_to_rename.update({x: f'"{x.upper()}"'}) for x in keyword_columns]
+        data.rename(columns=columns_to_rename, inplace=True)
 
     # get data types
     db_table_cols: __pd__.Series = data.dtypes
+
     # Handle datetime64[ns] objects
     db_table_cols[db_table_cols == "datetime64[ns]"] = "VARCHAR2(200)"
 
@@ -155,21 +162,16 @@ def generate_table_creation_query(
     string_col_pairs: list = []
     nan_col_pairs: list = []
 
-    oracle_keywords: list = ["default"]
-
     x: str
     for x in data.columns:
         # Oracle keywords
-        column_name: str = x
-        if column_name in oracle_keywords:
-            column_name = f'"{x.upper()}"'
         if str(data[x].dtype) == "object":
             data[x] = data[x].astype(__np__.str)
             # Check if date
             try:
                 to_date_len = len(data[x][data[x].str.contains("to_date")])
                 if to_date_len == len(data) and to_date_len > 0:
-                    date_cols.append(column_name)
+                    date_cols.append(x)
                     continue
             except ValueError as e:
                 if (
@@ -186,9 +188,9 @@ def generate_table_creation_query(
         else:
             if data[x].isnull().values.any():
                 if db_table_cols[x] == "FLOAT(32)":
-                    nan_col_pairs.append((column_name, "BINARY_FLOAT"))
+                    nan_col_pairs.append((x, "BINARY_FLOAT"))
                 elif db_table_cols[x] == "FLOAT(64)":
-                    nan_col_pairs.append((column_name, "BINARY_DOUBLE"))
+                    nan_col_pairs.append((x, "BINARY_DOUBLE"))
 
     for col in date_cols:
         db_table_cols[col] = "DATE"
