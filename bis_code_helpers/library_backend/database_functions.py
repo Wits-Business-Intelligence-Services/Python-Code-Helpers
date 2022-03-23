@@ -160,15 +160,16 @@ def generate_table_creation_query(
     x: str
     for x in data.columns:
         # Oracle keywords
-        if x in oracle_keywords:
-            x = f'"{x.upper()}"'
+        column_name: str = x
+        if column_name in oracle_keywords:
+            column_name = f'"{x.upper()}"'
         if str(data[x].dtype) == "object":
             data[x] = data[x].astype(__np__.str)
             # Check if date
             try:
                 to_date_len = len(data[x][data[x].str.contains("to_date")])
                 if to_date_len == len(data) and to_date_len > 0:
-                    date_cols.append(x)
+                    date_cols.append(column_name)
                     continue
             except ValueError as e:
                 if (
@@ -185,9 +186,9 @@ def generate_table_creation_query(
         else:
             if data[x].isnull().values.any():
                 if db_table_cols[x] == "FLOAT(32)":
-                    nan_col_pairs.append((x, "BINARY_FLOAT"))
+                    nan_col_pairs.append((column_name, "BINARY_FLOAT"))
                 elif db_table_cols[x] == "FLOAT(64)":
-                    nan_col_pairs.append((x, "BINARY_DOUBLE"))
+                    nan_col_pairs.append((column_name, "BINARY_DOUBLE"))
 
     for col in date_cols:
         db_table_cols[col] = "DATE"
