@@ -146,9 +146,9 @@ def generate_table_creation_query(
     # db_table_cols = db_table_cols.str.replace("object", "VARCHAR2(200)")
     db_table_cols = db_table_cols.str.replace("float32", "FLOAT(32)")
     db_table_cols = db_table_cols.str.replace("float64", "FLOAT(64)")
-    db_table_cols = db_table_cols.str.replace("int64", "NUMBER(64)")
-    db_table_cols = db_table_cols.str.replace("int32", "NUMBER(32)")
-    db_table_cols = db_table_cols.str.replace("bool", "NUMBER(1)")
+    db_table_cols = db_table_cols.str.replace("int64", "INT")
+    db_table_cols = db_table_cols.str.replace("int32", "INT")
+    db_table_cols = db_table_cols.str.replace("bool", "NUMBER(3)")
 
     # All columns that are objects and have all values as to_date(...) strings will be dates on the DB
     date_cols: list = []
