@@ -139,6 +139,7 @@ def generate_table_creation_query(
         columns_to_rename: dict = {}
         [columns_to_rename.update({x: f'"{x.upper()}"'}) for x in keyword_columns]
         data.rename(columns=columns_to_rename, inplace=True)
+        print("Renaming keyword columns:", columns_to_rename)
 
     # get data types
     db_table_cols: __pd__.Series = data.dtypes
