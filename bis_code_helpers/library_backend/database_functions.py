@@ -133,7 +133,7 @@ def generate_table_creation_query(
     """
     data = data.sample(n=min(max(50000, len(data) // 3), len(data)), random_state=1).copy()
 
-    oracle_keywords: list = ["default"]
+    oracle_keywords: list = ["default", "comment"]
     keyword_columns: list = [x for x in data.columns if x in oracle_keywords]
     if len(keyword_columns) > 0:
         columns_to_rename: dict = {}
