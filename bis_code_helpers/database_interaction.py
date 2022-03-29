@@ -1,4 +1,5 @@
 import pandas as __pd__
+import pandas.core.dtypes.common
 import sqlalchemy.engine
 
 import bis_code_helpers
@@ -282,6 +283,9 @@ def upload_data_to_table(
         if table_data[col_name].dtype == __np_object__ and table_data[col_name].str.contains("to_date").sum() == 0:
             table_data[col_name].replace({"'": ""}, regex=True, inplace=True)
             table_data[col_name].replace({",": ""}, inplace=True)
+
+        if table_data[col_name].dtype == __np_object__:
+            table_data[col_name] = table_data[col_name].str.slice(0, 4000)
 
     while (iterator_index + 1) * upload_partition_size < data_num_records:
 
