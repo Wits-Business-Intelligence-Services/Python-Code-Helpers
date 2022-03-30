@@ -285,7 +285,7 @@ def upload_data_to_table(
             table_data[col_name].replace({",": ""}, inplace=True)
 
         if table_data[col_name].dtype == __np_object__:
-            table_data[col_name] = table_data[col_name].str[0:3990]
+            table_data[col_name] = table_data[col_name].str[0:3975]
 
     while (iterator_index + 1) * upload_partition_size < data_num_records:
 
