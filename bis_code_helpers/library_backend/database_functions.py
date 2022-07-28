@@ -276,50 +276,56 @@ def generate_insert_query(data: __pd__.DataFrame, table_name: str) -> str:
     :param table_name: (str): Name of table to insert rows into.
     :return: (str): Query for inserting rows.
     """
-    regex_whitespace_saver: __Callable__ = lambda x: __re__.sub(" ", "___", x)
-    regex_whitespace_restorer: __Callable__ = lambda x: __re__.sub("___", " ", x)
+    # regex_whitespace_saver: __Callable__ = lambda x: __re__.sub(" ", "___", x)
+    # regex_whitespace_restorer: __Callable__ = lambda x: __re__.sub("___", " ", x)
 
     # Copy data so that it can be safely edited
     data = data.copy()
 
-    data_subset: __pd__.DataFrame = data.loc[:, data.dtypes == object]
-    data_subset = data_subset.astype(__np__.str)
-    data_subset = data_subset.applymap(
-        lambda x: "{}{}{}".format("'", x, "'")
+    data_object_subset: __pd__.DataFrame = data.loc[:, data.dtypes == object]
+    data_object_subset = data_object_subset.astype(__np__.str)
+    data_object_subset = data_object_subset.applymap(
+        lambda x: f"'{x}'"
         if not isinstance(x, type(None)) and ("to_date" not in x)
         else x
     )
 
-    data.loc[:, data.dtypes == object] = data_subset
+    data.loc[:, data.dtypes == object] = data_object_subset
 
     # Handle None values
     data = data.applymap(lambda x: "NULL" if (isinstance(x, type(None))) else x)
 
-    insert_data = data.to_string(header=False, index=False, index_names=False).split(
-        "\n"
-    )
-
-    # Save whitespaces in data
-    values: list = [
-        __re__.sub(
-            r"[a-zA-Z0-9]( |, | & | - )[a-zA-Z0-9]",
-            lambda x: regex_whitespace_saver(x.group()),
-            ele,
-        )
-        for ele in insert_data
-    ]
-
-    values = [",".join(ele.split()) for ele in values]
-    values = [r.replace("NaN", "NULL") for r in values]
-    values = [r.replace("nan", "NULL") for r in values]
     values = [
-        __re__.sub(
-            r"[a-zA-Z0-9](___|,___|___&___|___-___)[a-zA-Z0-9]",
-            lambda x: regex_whitespace_restorer(x.group()),
-            ele,
-        )
-        for ele in values
+        ', '.join([str(x) for x in data.iloc[i].values.flatten().tolist()])
+        for i in range(len(data))
     ]
+
+
+    # insert_data = data.to_string(header=False, index=False, index_names=False).split(
+    #     "\n"
+    # )
+    #
+    # # Save whitespaces in data
+    # values: list = [
+    #     __re__.sub(
+    #         r"[a-zA-Z0-9]( |, | & | - )[a-zA-Z0-9]",
+    #         lambda x: regex_whitespace_saver(x.group()),
+    #         ele,
+    #     )
+    #     for ele in insert_data
+    # ]
+    #
+    # values = [",".join(ele.split()) for ele in values]
+    # values = [r.replace("NaN", "NULL") for r in values]
+    # values = [r.replace("nan", "NULL") for r in values]
+    # values = [
+    #     __re__.sub(
+    #         r"[a-zA-Z0-9](___|,___|___&___|___-___)[a-zA-Z0-9]",
+    #         lambda x: regex_whitespace_restorer(x.group()),
+    #         ele,
+    #     )
+    #     for ele in values
+    # ]
 
     col_list = data.columns
     col_list = [col.replace(" ", "_") for col in col_list]
