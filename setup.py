@@ -22,7 +22,7 @@ VERSION = '1.3.0'
 
 # What packages are required for this module to be executed?
 REQUIRED = [
-     'python-oracledb'
+     'oracledb'
 ]
 
 # What packages are optional?
