@@ -24,7 +24,7 @@ def create_engine(
     if logger is None:
         logger = bis_code_helpers.library_backend.MockLogger()
 
-    conn_string: str = "oracle+cx_oracle://" + username + ":" + password + "@" + database
+    conn_string: str = "oracle+oracledb://" + username + ":" + password + "@" + database
     # print(conn_string)
     engine = __sq__.create_engine(conn_string, pool_size=30, max_overflow=-1)
 

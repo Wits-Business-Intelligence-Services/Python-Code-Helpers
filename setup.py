@@ -17,12 +17,12 @@ DESCRIPTION = 'Useful functions for Python projects at BIS.'
 URL = 'https://github.com/me/myproject'
 EMAIL = 'kyle.weiher@wits.ac.za'
 AUTHOR = 'Wits BIS'
-REQUIRES_PYTHON = '>=3.7.0'
-VERSION = '1.3.0'
+REQUIRES_PYTHON = '>=3.10.0'
+VERSION = '1.4.0'
 
 # What packages are required for this module to be executed?
 REQUIRED = [
-     'sqlalchemy', 'pandas', 'cx_oracle', 'numpy'
+     'sqlalchemy', 'pandas', 'oracledb', 'numpy'
 ]
 
 # What packages are optional?
