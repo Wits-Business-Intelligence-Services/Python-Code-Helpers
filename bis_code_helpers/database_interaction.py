@@ -7,7 +7,6 @@ from typing import Optional as __Optional__
 import sqlalchemy as __sq__
 from logging import Logger as __Logger__
 import time as __time__
-from numpy import object as __np_object__
 
 
 def current_db_compatible_time() -> str:
@@ -207,7 +206,7 @@ def create_table(
     if logger is None:
         logger = bis_code_helpers.library_backend.MockLogger()
 
-    # Check if table already exists and get it's column names.
+    # Check if table already exists and get its column names.
     db_col_names: __Optional__[list] = get_db_table_column_names(table_name, engine)
     # If the table does not exist
     if not db_col_names:
@@ -280,11 +279,11 @@ def upload_data_to_table(
 
     # Strip illegal characters
     for col_name in table_data.columns:
-        if table_data[col_name].dtype == __np_object__ and table_data[col_name].str.contains("to_date").sum() == 0:
+        if table_data[col_name].dtype == object and table_data[col_name].str.contains("to_date").sum() == 0:
             table_data[col_name].replace({"'": ""}, regex=True, inplace=True)
             table_data[col_name].replace({",": ""}, inplace=True)
 
-        if table_data[col_name].dtype == __np_object__:
+        if table_data[col_name].dtype == object:
             table_data[col_name] = table_data[col_name].str[0:3975]
 
     while (iterator_index + 1) * upload_partition_size < data_num_records:
