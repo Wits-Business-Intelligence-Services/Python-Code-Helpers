@@ -3,7 +3,7 @@ from logging import Logger as __Logger__
 
 import os as __os__
 import oracledb as __oracledb__
-__oracledb__.init_oracle_client(lib_dir=os.environ['ORACLE_HOME'])
+__oracledb__.init_oracle_client(lib_dir=__os__.environ['ORACLE_HOME'])
 
 import bis_code_helpers
 
