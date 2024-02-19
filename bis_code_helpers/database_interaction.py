@@ -427,7 +427,7 @@ def execute_action_query_on_db(
     try:
         with engine.connect() as conn:
             with conn.begin():
-                conn.execute(query)
+                conn.execute(sqlalchemy.text(query))
             logger.debug(success_msg)
     except Exception as e:
         logger.error(error_msg)
