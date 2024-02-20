@@ -283,7 +283,7 @@ def generate_insert_query(data: __pd__.DataFrame, table_name: str) -> str:
     data = data.copy()
 
     data_object_subset: __pd__.DataFrame = data.loc[:, data.dtypes == object]
-    data_object_subset = data_object_subset.astype(__np__.str)
+    data_object_subset = data_object_subset.astype(__np__.str_)
     data_object_subset = data_object_subset.applymap(
         lambda x: f"'{x}'"
         if not isinstance(x, type(None)) and ("to_date" not in x)
