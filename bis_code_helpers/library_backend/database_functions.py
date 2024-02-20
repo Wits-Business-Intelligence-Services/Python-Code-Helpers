@@ -167,7 +167,7 @@ def generate_table_creation_query(
     for x in data.columns:
         # Oracle keywords
         if str(data[x].dtype) == "object":
-            data[x] = data[x].astype(__np__.str)
+            data[x] = data[x].astype(__np__.str_)
             # Check if date
             try:
                 to_date_len = len(data[x][data[x].str.contains("to_date")])
