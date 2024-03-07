@@ -1,7 +1,7 @@
-import bis_code_helpers
+from .logging_backend import LoggingLevels
 
 
-def set_mock_logging_level(level: bis_code_helpers.LoggingLevels):
+def set_mock_logging_level(level: LoggingLevels):
     """
     Set the mock logger to a different logging level.
 
@@ -28,7 +28,7 @@ class MockLogger:
     A class to mock a logger.
     """
 
-    __logging_level__: int = bis_code_helpers.LoggingLevels.INFO.value
+    __logging_level__: int = LoggingLevels.INFO.value
 
     def __init__(self):
         """
@@ -36,30 +36,30 @@ class MockLogger:
         """
 
     @classmethod
-    def set_logging_level(cls, level: bis_code_helpers.LoggingLevels):
+    def set_logging_level(cls, level: LoggingLevels):
         cls.__logging_level__ = level.value
 
     def debug(self, message: str):
-        if MockLogger.__logging_level__ <= bis_code_helpers.LoggingLevels.DEBUG.value:
+        if MockLogger.__logging_level__ <= LoggingLevels.DEBUG.value:
             print("DEBUG: {message}".format(message=message))
         pass
 
     def info(self, message: str):
-        if MockLogger.__logging_level__ <= bis_code_helpers.LoggingLevels.INFO.value:
+        if MockLogger.__logging_level__ <= LoggingLevels.INFO.value:
             print("INFO: {message}".format(message=message))
         pass
 
     def warning(self, message: str):
-        if MockLogger.__logging_level__ <= bis_code_helpers.LoggingLevels.WARNING.value:
+        if MockLogger.__logging_level__ <= LoggingLevels.WARNING.value:
             print("WARNING: {message}".format(message=message))
         pass
 
     def error(self, message: str):
-        if MockLogger.__logging_level__ <= bis_code_helpers.LoggingLevels.ERROR.value:
+        if MockLogger.__logging_level__ <= LoggingLevels.ERROR.value:
             print("ERROR: {message}".format(message=message))
         pass
 
     def critical(self, message: str):
-        if MockLogger.__logging_level__ <= bis_code_helpers.LoggingLevels.CRITICAL.value:
+        if MockLogger.__logging_level__ <= LoggingLevels.CRITICAL.value:
             print("CRITICAL: {message}".format(message=message))
         pass
