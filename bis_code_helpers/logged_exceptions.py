@@ -13,7 +13,6 @@ class LoggedValueError(Exception):
     def __init__(self, logger: __logging__.Logger, message: str):
         super(LoggedValueError, self).__init__(message)
         logger.error(message)
-        logger.error("----------END:ERROR----------")
         self.message: str = message
 
     def __str__(self) -> str:
@@ -33,7 +32,6 @@ class LoggedDataError(Exception):
     def __init__(self, logger: __logging__.Logger, message: str):
         super(LoggedDataError, self).__init__(message)
         logger.error(message)
-        logger.error("----------END:ERROR----------")
         self.message: str = message
 
     def __str__(self) -> str:
@@ -51,7 +49,6 @@ class LoggedDatabaseError(Exception):
     def __init__(self, logger: __logging__.Logger, message: str):
         super(LoggedDatabaseError, self).__init__(message)
         logger.error(message)
-        logger.error("----------END:ERROR----------")
         self.message: str = message
 
     def __str__(self) -> str:
@@ -71,7 +68,6 @@ class LoggedSubprocessError(Exception):
     def __init__(self, logger: __logging__.Logger, message: str):
         super(LoggedSubprocessError, self).__init__(message)
         logger.error(message)
-        logger.error("----------END:ERROR----------")
         self.message: str = message
 
     def __str__(self) -> str:
