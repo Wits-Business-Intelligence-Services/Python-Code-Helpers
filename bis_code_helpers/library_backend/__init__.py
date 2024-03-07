@@ -11,5 +11,8 @@ from bis_code_helpers.library_backend.database_functions import (
 from bis_code_helpers.library_backend.MockLogger import (
     MockLogger,
     set_mock_logging_level,
-    LoggingLevels,
+)
+
+from bis_code_helpers.library_backend.logging_backend import (
+    LoggingLevels
 )
