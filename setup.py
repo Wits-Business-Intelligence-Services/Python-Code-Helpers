@@ -18,7 +18,7 @@ URL = 'https://github.com/me/myproject'
 EMAIL = 'kyle.weiher@wits.ac.za'
 AUTHOR = 'Wits BIS'
 REQUIRES_PYTHON = '>=3.10.0'
-VERSION = '1.5.5'
+VERSION = '1.5.6'
 
 # What packages are required for this module to be executed?
 REQUIRED = [
