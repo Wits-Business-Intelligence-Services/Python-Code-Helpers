@@ -300,33 +300,6 @@ def generate_insert_query(data: __pd__.DataFrame, table_name: str) -> str:
         for i in range(len(data))
     ]
 
-
-    # insert_data = data.to_string(header=False, index=False, index_names=False).split(
-    #     "\n"
-    # )
-    #
-    # # Save whitespaces in data
-    # values: list = [
-    #     __re__.sub(
-    #         r"[a-zA-Z0-9]( |, | & | - )[a-zA-Z0-9]",
-    #         lambda x: regex_whitespace_saver(x.group()),
-    #         ele,
-    #     )
-    #     for ele in insert_data
-    # ]
-    #
-    # values = [",".join(ele.split()) for ele in values]
-    # values = [r.replace("NaN", "NULL") for r in values]
-    # values = [r.replace("nan", "NULL") for r in values]
-    # values = [
-    #     __re__.sub(
-    #         r"[a-zA-Z0-9](___|,___|___&___|___-___)[a-zA-Z0-9]",
-    #         lambda x: regex_whitespace_restorer(x.group()),
-    #         ele,
-    #     )
-    #     for ele in values
-    # ]
-
     col_list = data.columns
     col_list = [col.replace(" ", "_") for col in col_list]
     col_list = ", ".join(col_list)
