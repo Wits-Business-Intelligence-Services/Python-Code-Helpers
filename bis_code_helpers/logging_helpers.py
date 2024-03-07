@@ -1,3 +1,5 @@
+import bis_code_helpers
+
 import logging as __logging__
 from os import path as __path__
 from os import mkdir as __mkdir__
@@ -39,3 +41,30 @@ def setup_logging(
 
     logger: __logging__.Logger = __logging__.getLogger()
     return logger
+
+
+def format_text_with_dashes(
+        text: str,
+        line_width: int,
+) -> str:
+    """
+    Formats a log info entry with dashes and centres the text within.
+
+    Args:
+        text (str): text to be formatted and logged
+        line_width (int): total line width of dashed log entry
+
+    Returns:
+        None
+
+    """
+    text_width: int = len(text)
+    num_dashes: int = line_width - text_width
+    text_even_length: bool = text_width % 2 == 0
+    first_dash_substring = '-' * (num_dashes // 2)
+    second_dash_substring = first_dash_substring
+    if not text_even_length:
+        second_dash_substring += '-'
+
+    return first_dash_substring + text + second_dash_substring
+

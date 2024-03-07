@@ -30,4 +30,5 @@ __all__ = [
     "LoggingLevels",
     "current_db_compatible_time",
     "run_external_command",
+    "format_text_with_dashes"
 ]
