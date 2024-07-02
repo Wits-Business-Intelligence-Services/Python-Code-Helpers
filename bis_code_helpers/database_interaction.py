@@ -409,7 +409,7 @@ def execute_select_query_on_db(
 
 def execute_action_query_on_db(
     query: str, success_msg: str, error_msg: str, engine: sqlalchemy.engine.Engine, logger: __Logger__ = None,
-) -> None:
+) -> __sq__.CursorResult:
     """
     Execute a non-returning, commit required query.
 
@@ -418,7 +418,7 @@ def execute_action_query_on_db(
     :param error_msg: (str): Error message for failed execution.
     :param engine: (sqlalchemy.engine): DB engine used for DB connection.
     :param logger: (logging.Logger): Logger to use for logging.
-    :return: None
+    :return: (sqlalchemy.CursorResult): Result object from cursor that executed query.
     """
 
     if logger is None:
@@ -427,8 +427,9 @@ def execute_action_query_on_db(
     try:
         with engine.connect() as conn:
             with conn.begin():
-                conn.execute(sqlalchemy.text(query))
+                output: __sq__.CursorResult = conn.execute(sqlalchemy.text(query))
             logger.debug(success_msg)
+            return output
     except Exception as e:
         logger.error(error_msg)
         raise bis_code_helpers.LoggedDatabaseError(logger, str(e))
