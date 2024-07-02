@@ -28,7 +28,7 @@ There is no prebuilt package in PyPI, install straight from GitHub
 `pip install --upgrade git+https://github.com/Wits-Business-Intelligence-Services/Python-Code-Helpers.git`
 
 ### With release version
-`pip install --upgrade git+https://github.com/Wits-Business-Intelligence-Services/Python-Code-Helpers.git@1.6.1`
+`pip install --upgrade git+https://github.com/Wits-Business-Intelligence-Services/Python-Code-Helpers.git@1.7.0`
 
 ### requirements.txt
 `bis_code_helpers @ git+https://github.com/Wits-Business-Intelligence-Services/Python-Code-Helpers.git`
