@@ -1,10 +1,7 @@
-import math
-
-import pandas as __pd__
-from typing import Callable as __Callable__
-import re as __re__
-import numpy as __np__
 import math as __math__
+
+import numpy as __np__
+import pandas as __pd__
 
 
 # ----------------------------------------------------
@@ -13,7 +10,7 @@ import math as __math__
 
 
 def generate_table_to_table_insert_query(
-    source_table_name: str, target_table_name: str
+        source_table_name: str, target_table_name: str
 ) -> str:
     """
     Generate query to copy all data from source table to target table.
@@ -118,7 +115,7 @@ def __generate_table_creation_query__(column_data: str, table_name: str) -> str:
 
 
 def generate_table_creation_query(
-    data: __pd__.DataFrame, table_name: str, allow_nulls: bool = True,
+        data: __pd__.DataFrame, table_name: str, allow_nulls: bool = True,
 ) -> str:
     """
     Generate query for creating a table based on the data in an inputted DataFrame.
@@ -176,14 +173,14 @@ def generate_table_creation_query(
                     continue
             except ValueError as e:
                 if (
-                    not "Cannot mask with non-boolean array containing NA / NaN values"
-                    in str(e)
+                        not "Cannot mask with non-boolean array containing NA / NaN values"
+                            in str(e)
                 ):
                     raise ValueError(e)
 
             # If not date
             col_len: int = data[x].map(len).max()
-            if math.isnan(col_len):
+            if __math__.isnan(col_len):
                 col_len = 10
             string_col_pairs.append((x, int(col_len + (10 - (col_len % 10)))))
         else:
@@ -196,7 +193,7 @@ def generate_table_creation_query(
     for col in date_cols:
         db_table_cols[col] = "DATE"
     for col, length in string_col_pairs:
-        rounded_up_length: int = 1 << ((length*2)-1).bit_length()
+        rounded_up_length: int = 1 << ((length * 2) - 1).bit_length()
         if rounded_up_length > 4000:
             rounded_up_length = 4000
         db_table_cols[col] = f"VARCHAR2({rounded_up_length})"
@@ -239,7 +236,7 @@ def generate_table_creation_query(
 
 
 def __generate_insert_query__(
-    column_names: str, data_list: list, table_name: str
+        column_names: str, data_list: list, table_name: str
 ) -> str:
     """
     Generate final query for inserting a set of rows into a table.
@@ -257,10 +254,10 @@ def __generate_insert_query__(
     for row in data_list:
         # row = row.replace(",", " ")
         query = (
-            query
-            + """\nINTO {table_name} ({column_names}) VALUES ({row})""".format(
-                table_name=table_name, column_names=column_names, row=row
-            )
+                query
+                + """\nINTO {table_name} ({column_names}) VALUES ({row})""".format(
+            table_name=table_name, column_names=column_names, row=row
+        )
         )
 
     query = query + """\nSELECT 1 FROM DUAL"""
@@ -282,18 +279,20 @@ def generate_insert_query(data: __pd__.DataFrame, table_name: str) -> str:
     # Copy data so that it can be safely edited
     data = data.copy()
 
+    # Handle None values
+    data = data.replace({__np__.nan: None})
+    data = data.map(lambda x: "NULL" if (isinstance(x, type(None))) else x)
+
     data_object_subset: __pd__.DataFrame = data.loc[:, data.dtypes == object]
+
     data_object_subset = data_object_subset.astype(__np__.str_)
     data_object_subset = data_object_subset.map(
         lambda x: f"'{x}'"
-        if not isinstance(x, type(None)) and ("to_date" not in x)
+        if not x == "NULL" and ("to_date" not in x)
         else x
     )
 
     data.loc[:, data.dtypes == object] = data_object_subset
-
-    # Handle None values
-    data = data.map(lambda x: "NULL" if (isinstance(x, type(None))) else x)
 
     values = [
         ', '.join([str(x) for x in data.iloc[i].values.flatten().tolist()])
@@ -317,7 +316,7 @@ def generate_insert_query(data: __pd__.DataFrame, table_name: str) -> str:
 
 
 def generate_update_column_by_value_query(
-    table_name: str, column_name: str, old_value: int, new_value: int
+        table_name: str, column_name: str, old_value: int, new_value: int
 ) -> str:
     """
     Generate query to update values of column matching old_value to the value in new_value.
