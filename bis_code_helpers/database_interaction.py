@@ -43,8 +43,8 @@ def check_existence_of_table(
                     "Table '{table_name}' exists.".format(table_name=table_name)
                 )
                 return True
-        except __sq__.exc.DatabaseError as error:
-            if "table or view does not exist" in str(error):
+        except Exception as error:
+            if "table or view" in str(error) and "does not exist" in str(error) :
                 logger.debug(
                     "Table '{table_name}' does not exist.".format(table_name=table_name)
                 )
