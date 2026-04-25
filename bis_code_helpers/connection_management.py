@@ -1,5 +1,6 @@
 import sqlalchemy as __sq__
 from logging import Logger as __Logger__
+from urllib import parse as __parse__
 
 import os as __os__
 import oracledb as __oracledb__
@@ -30,7 +31,7 @@ def create_engine(
     if logger is None:
         logger = bis_code_helpers.library_backend.MockLogger()
 
-    conn_string: str = "oracle+oracledb://" + username + ":" + password + "@" + database
+    conn_string: str = "oracle+oracledb://" + username + ":" + __parse__.quote_plus(password) + "@" + database
     # print(conn_string)
     engine = __sq__.create_engine(conn_string, pool_size=30, max_overflow=-1)
 
