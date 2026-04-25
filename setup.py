@@ -18,7 +18,7 @@ URL = 'https://github.com/Wits-Business-Intelligence-Services/Python-Code-Helper
 EMAIL = 'kyle.weiher@wits.ac.za'
 AUTHOR = 'Wits BIS'
 REQUIRES_PYTHON = '>=3.10.0'
-VERSION = '1.7.2'
+VERSION = '1.7.3'
 
 # What packages are required for this module to be executed?
 REQUIRED = [
