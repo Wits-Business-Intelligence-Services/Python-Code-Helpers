@@ -14,15 +14,15 @@ from setuptools import find_packages, setup, Command
 # Package meta-data.
 NAME = 'bis_code_helpers'
 DESCRIPTION = 'Useful functions for Python projects at BIS.'
-URL = 'https://github.com/me/myproject'
+URL = 'https://github.com/Wits-Business-Intelligence-Services/Python-Code-Helpers'
 EMAIL = 'kyle.weiher@wits.ac.za'
 AUTHOR = 'Wits BIS'
 REQUIRES_PYTHON = '>=3.10.0'
-VERSION = '1.7.1'
+VERSION = '1.7.2'
 
 # What packages are required for this module to be executed?
 REQUIRED = [
-     'sqlalchemy', 'pandas', 'oracledb', 'numpy'
+     'sqlalchemy', 'pandas', 'oracledb', 'numpy', 'urllib3'
 ]
 
 # What packages are optional?
